@@ -1,4 +1,5 @@
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
@@ -6,10 +7,11 @@ export default {
   output: {
     file: 'dist/tuya-thermostat-card.js',
     format: 'es',
-    sourcemap: true
+    sourcemap: true,
   },
   plugins: [
     resolve(),
-    terser()
-  ]
+    typescript({ tsconfig: './tsconfig.json' }),
+    terser(),
+  ],
 };
