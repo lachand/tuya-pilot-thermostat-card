@@ -477,27 +477,29 @@ export class TuyaThermostatCard extends LitElement {
 
         <hr class="divider">
 
-        <div class="btn-row">
-          <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
-            ${t('Off', 'Éteint')}
-          </button>
-          <button class="chip-btn${isOn ? ' selected' : ''}" @click=${() => this._setHvac('heat')}>
-            ${t('Heat', 'Chauffer')}
-          </button>
-        </div>
-
         ${modeOptions.length ? html`
-          <hr class="divider">
           <div class="section-label">${t('Mode', 'Mode')}</div>
           <div class="btn-row">
+            <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
+              ${t('Off', 'Éteint')}
+            </button>
             ${modeOptions.map((opt: string) => html`
               <button
-                class="chip-btn${currentMode === opt ? ' selected' : ''}"
-                @click=${() => this._setMode(opt)}
+                class="chip-btn${isOn && currentMode === opt ? ' selected' : ''}"
+                @click=${() => this._activateMode(opt)}
               >${TUYA_MODES[opt] ?? opt}</button>
             `)}
           </div>
-        ` : ''}
+        ` : html`
+          <div class="btn-row">
+            <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
+              ${t('Off', 'Éteint')}
+            </button>
+            <button class="chip-btn${isOn ? ' selected' : ''}" @click=${() => this._setHvac('heat')}>
+              ${t('Heat', 'Chauffer')}
+            </button>
+          </div>
+        `}
 
         ${(power !== null || elecVal !== null) ? html`
           <hr class="divider">
@@ -526,7 +528,14 @@ export class TuyaThermostatCard extends LitElement {
     });
   }
 
-  private _setMode(option: string) {
+  private _activateMode(option: string) {
+    // Si le thermostat est éteint, l'allumer d'abord
+    if (this._climate?.state === 'off') {
+      this.hass.callService('climate', 'set_hvac_mode', {
+        entity_id: this.config.entity,
+        hvac_mode: 'heat',
+      });
+    }
     this.hass.callService('select', 'select_option', {
       entity_id: this.config.mode_entity,
       option,
