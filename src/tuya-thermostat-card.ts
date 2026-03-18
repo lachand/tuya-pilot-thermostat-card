@@ -11,10 +11,23 @@ const TUYA_MODES: Record<string, string> = {
 
 // ---------- Éditeur visuel ----------
 
+// Suffixes des unique_id définis dans l'intégration tuya_thermostat
+const SUFFIX_MAP: Record<string, string> = {
+  '_mode':        'mode_entity',
+  '_heating':     'heating_entity',
+  '_window':      'window_entity',
+  '_fault':       'fault_entity',
+  '_power':       'power_entity',
+  '_child_lock':  'child_lock_entity',
+  // electricity_statistics sensor : unique_id se termine par rien de spécifique,
+  // on le détecte par domaine + présence de "elec" dans l'unique_id
+};
+
 @customElement('tuya-thermostat-card-editor')
 export class TuyaThermostatCardEditor extends LitElement {
   @property({ type: Object }) hass: any;
   @property({ type: Object }) private _config: any = {};
+  @property({ type: String }) private _autoStatus: string = '';
 
   static styles = css`
     .grid {
@@ -48,6 +61,25 @@ export class TuyaThermostatCardEditor extends LitElement {
       letter-spacing: 0.05em;
       color: var(--secondary-text-color);
     }
+    .auto-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .auto-btn {
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: 1px solid var(--primary-color);
+      background: transparent;
+      color: var(--primary-color);
+      font-size: 0.85em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .auto-btn:hover { background: var(--primary-color); color: #fff; }
+    .auto-status { font-size: 0.8em; color: var(--secondary-text-color); }
   `;
 
   setConfig(config: any) {
@@ -57,11 +89,67 @@ export class TuyaThermostatCardEditor extends LitElement {
   private _changed(key: string, e: Event) {
     const val = (e.target as HTMLInputElement).value;
     this._config = { ...this._config, [key]: val || undefined };
+    this._fire();
+  }
+
+  private _fire() {
     this.dispatchEvent(new CustomEvent('config-changed', {
       detail: { config: this._config },
       bubbles: true,
       composed: true,
     }));
+  }
+
+  private _autoDetect() {
+    const climateId: string = this._config.entity;
+    if (!climateId || !this.hass?.entities) {
+      this._autoStatus = 'Entité climate non définie ou hass.entities indisponible.';
+      return;
+    }
+
+    const climateEntry = this.hass.entities[climateId];
+    if (!climateEntry?.device_id) {
+      this._autoStatus = 'Aucun appareil lié à cette entité.';
+      return;
+    }
+
+    const deviceId: string = climateEntry.device_id;
+
+    // Toutes les entités du même appareil
+    const siblings: any[] = Object.values(this.hass.entities as Record<string, any>)
+      .filter((e: any) => e.device_id === deviceId && e.entity_id !== climateId);
+
+    const detected: Record<string, string> = {};
+
+    for (const entry of siblings) {
+      const uid: string = entry.unique_id ?? '';
+      const eid: string = entry.entity_id;
+      const domain: string = eid.split('.')[0];
+
+      // Correspondance par suffixe de l'unique_id
+      for (const [suffix, key] of Object.entries(SUFFIX_MAP)) {
+        if (uid.endsWith(suffix)) {
+          detected[key] = eid;
+          break;
+        }
+      }
+
+      // Sensor statistiques électriques (unique_id contient "elec" ou "electricity")
+      if (domain === 'sensor' && !detected['elec_entity'] &&
+          (uid.includes('elec') || uid.includes('electricity'))) {
+        detected['elec_entity'] = eid;
+      }
+    }
+
+    const count = Object.keys(detected).length;
+    if (count === 0) {
+      this._autoStatus = 'Aucune entité associée détectée.';
+      return;
+    }
+
+    this._config = { ...this._config, ...detected };
+    this._autoStatus = `${count} entité(s) détectée(s) automatiquement.`;
+    this._fire();
   }
 
   private _field(key: string, label: string, placeholder = '') {
@@ -83,6 +171,13 @@ export class TuyaThermostatCardEditor extends LitElement {
       <div class="grid">
         <div class="full">${this._field('entity', 'Entité climate *', 'climate.mon_thermostat')}</div>
         <div class="full">${this._field('name', 'Nom (optionnel)', 'Thermostat salon')}</div>
+
+        <div class="auto-row">
+          <button class="auto-btn" @click=${() => this._autoDetect()}>
+            Autodétection
+          </button>
+          ${this._autoStatus ? html`<span class="auto-status">${this._autoStatus}</span>` : ''}
+        </div>
 
         <h4>Entités optionnelles</h4>
         ${this._field('mode_entity',       'Select — Mode',          'select.thermostat_mode')}
