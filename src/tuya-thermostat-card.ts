@@ -530,20 +530,19 @@ export class TuyaThermostatCard extends LitElement {
     `;
   }
 
+  // callService moderne : entity_id dans le target (4ème paramètre)
+  private _call(domain: string, service: string, data: Record<string, any>, entityId: string) {
+    this.hass.callService(domain, service, data, { entity_id: entityId });
+  }
+
   private _adjustTemp(delta: number) {
     const current = this._climate?.attributes.temperature ?? 20;
     const next = Math.round((current + delta) * 2) / 2;
-    this.hass.callService('climate', 'set_temperature', {
-      entity_id: this.config.entity,
-      temperature: next,
-    });
+    this._call('climate', 'set_temperature', { temperature: next }, this.config.entity);
   }
 
   private _setHvac(mode: string) {
-    this.hass.callService('climate', 'set_hvac_mode', {
-      entity_id: this.config.entity,
-      hvac_mode: mode,
-    });
+    this._call('climate', 'set_hvac_mode', { hvac_mode: mode }, this.config.entity);
   }
 
   private _isValidEntityId(id: any): id is string {
@@ -551,18 +550,11 @@ export class TuyaThermostatCard extends LitElement {
   }
 
   private _activateMode(optionFr: string) {
-    // Allumer si éteint
     if (this._climate?.state === 'off') {
-      this.hass.callService('climate', 'set_hvac_mode', {
-        entity_id: this.config.entity,
-        hvac_mode: 'heat',
-      });
+      this._call('climate', 'set_hvac_mode', { hvac_mode: 'heat' }, this.config.entity);
     }
     if (!this._isValidEntityId(this.config.mode_entity)) return;
-    this.hass.callService('select', 'select_option', {
-      entity_id: this.config.mode_entity,
-      option: optionFr,
-    });
+    this._call('select', 'select_option', { option: optionFr }, this.config.mode_entity);
   }
 }
 

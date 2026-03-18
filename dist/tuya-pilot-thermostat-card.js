@@ -167,7 +167,7 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           </div>
         `:""}
       </ha-card>
-    `}_adjustTemp(t){const e=this._climate?.attributes.temperature??20,i=Math.round(2*(e+t))/2;this.hass.callService("climate","set_temperature",{entity_id:this.config.entity,temperature:i})}_setHvac(t){this.hass.callService("climate","set_hvac_mode",{entity_id:this.config.entity,hvac_mode:t})}_isValidEntityId(t){return"string"==typeof t&&/^[a-z_]+\.[a-z0-9_]+$/.test(t)}_activateMode(t){"off"===this._climate?.state&&this.hass.callService("climate","set_hvac_mode",{entity_id:this.config.entity,hvac_mode:"heat"}),this._isValidEntityId(this.config.mode_entity)&&this.hass.callService("select","select_option",{entity_id:this.config.mode_entity,option:t})}};_t.styles=r`
+    `}_call(t,e,i,s){this.hass.callService(t,e,i,{entity_id:s})}_adjustTemp(t){const e=this._climate?.attributes.temperature??20,i=Math.round(2*(e+t))/2;this._call("climate","set_temperature",{temperature:i},this.config.entity)}_setHvac(t){this._call("climate","set_hvac_mode",{hvac_mode:t},this.config.entity)}_isValidEntityId(t){return"string"==typeof t&&/^[a-z_]+\.[a-z0-9_]+$/.test(t)}_activateMode(t){"off"===this._climate?.state&&this._call("climate","set_hvac_mode",{hvac_mode:"heat"},this.config.entity),this._isValidEntityId(this.config.mode_entity)&&this._call("select","select_option",{option:t},this.config.mode_entity)}};_t.styles=r`
     :host { display: block; }
 
     ha-card {
