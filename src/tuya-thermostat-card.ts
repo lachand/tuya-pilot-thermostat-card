@@ -130,13 +130,14 @@ export class TuyaThermostatCardEditor extends LitElement {
   private _picker(key: string, label: string, domain: string | string[]) {
     const domains = Array.isArray(domain) ? domain : [domain];
     return html`
-      <ha-selector
+      <ha-entity-picker
         .hass=${this.hass}
-        .label=${label}
         .value=${this._config[key] || ''}
-        .selector=${{ entity: { domain: domains } }}
+        .includeDomains=${domains}
+        .label=${label}
+        allow-custom-entity
         @value-changed=${(e: CustomEvent) => this._changed(key, e.detail.value)}
-      ></ha-selector>
+      ></ha-entity-picker>
     `;
   }
 
@@ -145,13 +146,12 @@ export class TuyaThermostatCardEditor extends LitElement {
       <div class="grid">
         ${this._picker('entity', 'Entité climate *', 'climate')}
 
-        <ha-selector
-          .hass=${this.hass}
+        <paper-input
           .label=${'Nom (optionnel)'}
           .value=${this._config.name || ''}
-          .selector=${{ text: {} }}
+          placeholder="Thermostat salon"
           @value-changed=${(e: CustomEvent) => this._changed('name', e.detail.value)}
-        ></ha-selector>
+        ></paper-input>
 
         <div class="auto-row">
           <button class="auto-btn" @click=${() => this._autoDetect()}>
