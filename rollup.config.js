@@ -5,7 +5,7 @@ import { terser } from 'rollup-plugin-terser';
 export default {
   input: 'src/tuya-thermostat-card.ts',
   output: {
-    file: 'dist/tuya-thermostat-card.js',
+    file: 'dist/tuya-pilot-thermostat-card.js',
     format: 'es',
     sourcemap: true,
   },

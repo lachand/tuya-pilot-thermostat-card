@@ -2,7 +2,7 @@
   "name": "tuya-thermostat-card",
   "version": "0.1.0",
   "description": "Carte Lovelace pour contrôler un thermostat Tuya (LAN)",
-  "main": "dist/tuya-thermostat-card.js",
+  "main": "dist/tuya-pilot-thermostat-card.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "tsc --watch"

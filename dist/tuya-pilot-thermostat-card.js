@@ -268,4 +268,4 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
       color: var(--primary-text-color);
     }
   `,t([rt({type:Object})],ct.prototype,"hass",void 0),t([rt({type:Object})],ct.prototype,"config",void 0),ct=t([(t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e):((t,e)=>{const{kind:i,elements:s}=e;return{kind:i,elements:s,finisher(e){customElements.define(t,e)}}})(t,e))("tuya-thermostat-card")],ct),window.customCards=window.customCards||[],window.customCards.push({type:"tuya-thermostat-card",name:"Tuya Thermostat Card",preview:!0,description:"Carte Lovelace pour le thermostat Tuya (tuya_thermostat)"});export{ct as TuyaThermostatCard};
-//# sourceMappingURL=tuya-thermostat-card.js.map
+//# sourceMappingURL=tuya-pilot-thermostat-card.js.map
