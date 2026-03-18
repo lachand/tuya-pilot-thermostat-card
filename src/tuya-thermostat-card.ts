@@ -30,31 +30,8 @@ export class TuyaThermostatCardEditor extends LitElement {
   @property({ type: String }) private _autoStatus: string = '';
 
   static styles = css`
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .full { grid-column: 1 / -1; }
-    label {
-      display: block;
-      font-size: 0.8em;
-      color: var(--secondary-text-color);
-      margin-bottom: 2px;
-    }
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 6px 8px;
-      border: 1px solid var(--divider-color, #e0e0e0);
-      border-radius: 4px;
-      font-size: 0.95em;
-      background: var(--card-background-color, #fff);
-      color: var(--primary-text-color);
-    }
-    input:focus { outline: 2px solid var(--primary-color); }
+    .grid { display: grid; gap: 8px; }
     h4 {
-      grid-column: 1 / -1;
       margin: 8px 0 2px;
       font-size: 0.8em;
       text-transform: uppercase;
@@ -62,11 +39,10 @@ export class TuyaThermostatCardEditor extends LitElement {
       color: var(--secondary-text-color);
     }
     .auto-row {
-      grid-column: 1 / -1;
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 2px;
+      margin: 4px 0;
     }
     .auto-btn {
       padding: 5px 14px;
@@ -86,9 +62,8 @@ export class TuyaThermostatCardEditor extends LitElement {
     this._config = { ...config };
   }
 
-  private _changed(key: string, e: Event) {
-    const val = (e.target as HTMLInputElement).value;
-    this._config = { ...this._config, [key]: val || undefined };
+  private _changed(key: string, value: string) {
+    this._config = { ...this._config, [key]: value || undefined };
     this._fire();
   }
 
@@ -152,25 +127,31 @@ export class TuyaThermostatCardEditor extends LitElement {
     this._fire();
   }
 
-  private _field(key: string, label: string, placeholder = '') {
+  private _picker(key: string, label: string, domain: string | string[]) {
+    const domains = Array.isArray(domain) ? domain : [domain];
     return html`
-      <div>
-        <label>${label}</label>
-        <input
-          type="text"
-          .value=${this._config[key] || ''}
-          placeholder=${placeholder}
-          @change=${(e: Event) => this._changed(key, e)}
-        />
-      </div>
+      <ha-selector
+        .hass=${this.hass}
+        .label=${label}
+        .value=${this._config[key] || ''}
+        .selector=${{ entity: { domain: domains } }}
+        @value-changed=${(e: CustomEvent) => this._changed(key, e.detail.value)}
+      ></ha-selector>
     `;
   }
 
   render() {
     return html`
       <div class="grid">
-        <div class="full">${this._field('entity', 'Entité climate *', 'climate.mon_thermostat')}</div>
-        <div class="full">${this._field('name', 'Nom (optionnel)', 'Thermostat salon')}</div>
+        ${this._picker('entity', 'Entité climate *', 'climate')}
+
+        <ha-selector
+          .hass=${this.hass}
+          .label=${'Nom (optionnel)'}
+          .value=${this._config.name || ''}
+          .selector=${{ text: {} }}
+          @value-changed=${(e: CustomEvent) => this._changed('name', e.detail.value)}
+        ></ha-selector>
 
         <div class="auto-row">
           <button class="auto-btn" @click=${() => this._autoDetect()}>
@@ -180,13 +161,13 @@ export class TuyaThermostatCardEditor extends LitElement {
         </div>
 
         <h4>Entités optionnelles</h4>
-        ${this._field('mode_entity',       'Select — Mode',          'select.thermostat_mode')}
-        ${this._field('heating_entity',    'Binary sensor — Chauffe','binary_sensor.thermostat_chauffe')}
-        ${this._field('window_entity',     'Binary sensor — Fenêtre','binary_sensor.thermostat_fenetre')}
-        ${this._field('fault_entity',      'Binary sensor — Défaut', 'binary_sensor.thermostat_alarme')}
-        ${this._field('power_entity',      'Sensor — Puissance',     'sensor.thermostat_puissance')}
-        ${this._field('elec_entity',       'Sensor — Conso élec.',   'sensor.thermostat_electricite')}
-        ${this._field('child_lock_entity', 'Switch — Verrou enfant', 'switch.thermostat_verrou')}
+        ${this._picker('mode_entity',       'Select — Mode',          'select')}
+        ${this._picker('heating_entity',    'Binary sensor — Chauffe','binary_sensor')}
+        ${this._picker('window_entity',     'Binary sensor — Fenêtre','binary_sensor')}
+        ${this._picker('fault_entity',      'Binary sensor — Défaut', 'binary_sensor')}
+        ${this._picker('power_entity',      'Sensor — Puissance',     'sensor')}
+        ${this._picker('elec_entity',       'Sensor — Conso élec.',   'sensor')}
+        ${this._picker('child_lock_entity', 'Switch — Verrou enfant', 'switch')}
       </div>
     `;
   }
