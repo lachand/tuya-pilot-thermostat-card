@@ -77,42 +77,82 @@ export class TuyaThermostatCardEditor extends LitElement {
 
   private _autoDetect() {
     const climateId: string = this._config.entity;
-    if (!climateId || !this.hass?.entities) {
-      this._autoStatus = 'Entité climate non définie ou hass.entities indisponible.';
+    if (!climateId) {
+      this._autoStatus = 'Sélectionnez d\'abord l\'entité climate.';
       return;
     }
 
-    const climateEntry = this.hass.entities[climateId];
-    if (!climateEntry?.device_id) {
-      this._autoStatus = 'Aucun appareil lié à cette entité.';
-      return;
+    // Stratégie 1 : via hass.entities (device_id ou config_entry_id)
+    let siblings: any[] = [];
+    if (this.hass?.entities) {
+      const climateEntry = this.hass.entities[climateId] as any;
+      if (climateEntry) {
+        // Essai par config_entry_id (plus fiable que device_id)
+        if (climateEntry.config_entry_id) {
+          siblings = Object.values(this.hass.entities as Record<string, any>)
+            .filter((e: any) => e.config_entry_id === climateEntry.config_entry_id
+                              && e.entity_id !== climateId);
+        }
+        // Fallback : device_id
+        if (siblings.length === 0 && climateEntry.device_id) {
+          siblings = Object.values(this.hass.entities as Record<string, any>)
+            .filter((e: any) => e.device_id === climateEntry.device_id
+                              && e.entity_id !== climateId);
+        }
+      }
     }
 
-    const deviceId: string = climateEntry.device_id;
+    // Stratégie 2 : si hass.entities vide/indisponible, chercher par préfixe
+    // dans hass.states (ex: climate.salon → cherche select.salon_*, sensor.salon_*, etc.)
+    if (siblings.length === 0 && this.hass?.states) {
+      const objectId = climateId.split('.')[1]; // ex: "salon_thermostat"
+      // Racine commune : on retire les suffixes courants du climate
+      const base = objectId.replace(/_thermostat$|_climate$/, '');
+      siblings = Object.keys(this.hass.states)
+        .filter(eid => eid !== climateId && eid.split('.')[1].startsWith(base))
+        .map(eid => ({ entity_id: eid, unique_id: '' }));
+    }
 
-    // Toutes les entités du même appareil
-    const siblings: any[] = Object.values(this.hass.entities as Record<string, any>)
-      .filter((e: any) => e.device_id === deviceId && e.entity_id !== climateId);
+    if (siblings.length === 0) {
+      this._autoStatus = 'Aucune entité associée trouvée pour ce thermostat.';
+      return;
+    }
 
     const detected: Record<string, string> = {};
 
     for (const entry of siblings) {
-      const uid: string = entry.unique_id ?? '';
+      const uid: string = (entry.unique_id ?? '').toLowerCase();
       const eid: string = entry.entity_id;
       const domain: string = eid.split('.')[0];
+      const name: string = eid.split('.')[1].toLowerCase();
 
-      // Correspondance par suffixe de l'unique_id
+      // Par suffixe unique_id (intégration tuya_thermostat)
       for (const [suffix, key] of Object.entries(SUFFIX_MAP)) {
-        if (uid.endsWith(suffix)) {
-          detected[key] = eid;
-          break;
+        if (uid.endsWith(suffix) && !detected[key]) {
+          detected[key] = eid; continue;
         }
       }
 
-      // Sensor statistiques électriques (unique_id contient "elec" ou "electricity")
-      if (domain === 'sensor' && !detected['elec_entity'] &&
-          (uid.includes('elec') || uid.includes('electricity'))) {
-        detected['elec_entity'] = eid;
+      // Par domaine + mots-clés dans l'entity_id (fallback)
+      if (domain === 'select' && !detected['mode_entity']) {
+        detected['mode_entity'] = eid;
+      } else if (domain === 'binary_sensor') {
+        if (!detected['heating_entity'] && /heat|chauffe|running/.test(name)) {
+          detected['heating_entity'] = eid;
+        } else if (!detected['window_entity'] && /window|fen.tre|vitre/.test(name)) {
+          detected['window_entity'] = eid;
+        } else if (!detected['fault_entity'] && /fault|alarm|d.faut/.test(name)) {
+          detected['fault_entity'] = eid;
+        }
+      } else if (domain === 'sensor') {
+        if (!detected['power_entity'] && /power|puissance/.test(name)) {
+          detected['power_entity'] = eid;
+        } else if (!detected['elec_entity'] && /elec|conso|statistic/.test(name)) {
+          detected['elec_entity'] = eid;
+        }
+      } else if (domain === 'switch' && !detected['child_lock_entity']
+                 && /child|lock|verrou/.test(name)) {
+        detected['child_lock_entity'] = eid;
       }
     }
 
@@ -123,7 +163,7 @@ export class TuyaThermostatCardEditor extends LitElement {
     }
 
     this._config = { ...this._config, ...detected };
-    this._autoStatus = `${count} entité(s) détectée(s) automatiquement.`;
+    this._autoStatus = `${count} entité(s) détectée(s).`;
     this._fire();
   }
 
