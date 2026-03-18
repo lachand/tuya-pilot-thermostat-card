@@ -176,19 +176,24 @@ export class TuyaThermostatCardEditor extends LitElement {
     this._fire();
   }
 
-  private _picker(key: string, label: string, domain: string | string[]) {
+  private _picker(key: string, label: string, domain: string | string[], entityFilter?: (e: any) => boolean) {
     const domains = Array.isArray(domain) ? domain : [domain];
     return html`
       <ha-entity-picker
         .hass=${this.hass}
         .value=${this._config[key] || ''}
         .includeDomains=${domains}
+        .entityFilter=${entityFilter}
         .label=${label}
         allow-custom-entity
         @value-changed=${(e: CustomEvent) => this._changed(key, e.detail.value)}
       ></ha-entity-picker>
     `;
   }
+
+  // Filtre : select avec plus de 2 options → exclut le sélecteur d'unité (c/f)
+  private readonly _modeFilter = (stateObj: any) =>
+    (stateObj.attributes.options?.length ?? 0) > 2;
 
   render() {
     return html`
@@ -210,7 +215,7 @@ export class TuyaThermostatCardEditor extends LitElement {
         </div>
 
         <h4>Entités optionnelles</h4>
-        ${this._picker('mode_entity',       'Select — Mode',          'select')}
+        ${this._picker('mode_entity',       'Select — Mode',          'select', this._modeFilter)}
         ${this._picker('heating_entity',    'Binary sensor — Chauffe','binary_sensor')}
         ${this._picker('window_entity',     'Binary sensor — Fenêtre','binary_sensor')}
         ${this._picker('fault_entity',      'Binary sensor — Défaut', 'binary_sensor')}
