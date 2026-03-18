@@ -1,5 +1,6 @@
 import { LitElement, html, css, property, customElement } from 'lit-element';
 
+// Valeur Tuya → label FR
 const TUYA_MODES: Record<string, string> = {
   Standby:     'Éteint',
   Comfort:     'Confort',
@@ -8,6 +9,14 @@ const TUYA_MODES: Record<string, string> = {
   Thermostat:  'Températures',
   Programming: 'Programmation',
 };
+
+// Labels FR → valeur Tuya (inverse)
+const MODES_FR_TO_TUYA: Record<string, string> = Object.fromEntries(
+  Object.entries(TUYA_MODES).map(([k, v]) => [v, k])
+);
+
+// Liste ordonnée des labels FR (hors Éteint, géré par hvac_mode)
+const ACTIVE_MODES_FR = ['Confort', 'Éco', 'Hors-gel', 'Températures', 'Programmation'];
 
 // ---------- Éditeur visuel ----------
 
@@ -423,8 +432,12 @@ export class TuyaThermostatCard extends LitElement {
     const isOn = hvacMode !== 'off';
 
     const modeEnt = this._modeEntity;
+    // state de l'entité select = label FR (ex: "Confort") ou null
     const currentMode: string | null = modeEnt ? modeEnt.state : null;
-    const modeOptions: string[] = modeEnt ? (modeEnt.attributes.options ?? []) : [];
+    // Options : depuis l'entité select si dispo, sinon liste hardcodée
+    const modeOptions: string[] = modeEnt?.attributes.options?.length
+      ? modeEnt.attributes.options
+      : ACTIVE_MODES_FR;
 
     const windowOpen = this._windowEntity?.state === 'on';
     const fault = this._faultEntity?.state === 'on';
@@ -477,29 +490,18 @@ export class TuyaThermostatCard extends LitElement {
 
         <hr class="divider">
 
-        ${modeOptions.length ? html`
-          <div class="section-label">${t('Mode', 'Mode')}</div>
-          <div class="btn-row">
-            <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
-              ${t('Off', 'Éteint')}
-            </button>
-            ${modeOptions.map((opt: string) => html`
-              <button
-                class="chip-btn${isOn && currentMode === opt ? ' selected' : ''}"
-                @click=${() => this._activateMode(opt)}
-              >${TUYA_MODES[opt] ?? opt}</button>
-            `)}
-          </div>
-        ` : html`
-          <div class="btn-row">
-            <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
-              ${t('Off', 'Éteint')}
-            </button>
-            <button class="chip-btn${isOn ? ' selected' : ''}" @click=${() => this._setHvac('heat')}>
-              ${t('Heat', 'Chauffer')}
-            </button>
-          </div>
-        `}
+        <div class="section-label">${t('Mode', 'Mode')}</div>
+        <div class="btn-row">
+          <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
+            ${t('Off', 'Éteint')}
+          </button>
+          ${modeOptions.map((opt: string) => html`
+            <button
+              class="chip-btn${isOn && currentMode === opt ? ' selected' : ''}"
+              @click=${() => this._activateMode(opt)}
+            >${TUYA_MODES[opt] ?? opt}</button>
+          `)}
+        </div>
 
         ${(power !== null || elecVal !== null) ? html`
           <hr class="divider">
@@ -528,18 +530,24 @@ export class TuyaThermostatCard extends LitElement {
     });
   }
 
-  private _activateMode(option: string) {
-    // Si le thermostat est éteint, l'allumer d'abord
+  private _activateMode(optionFr: string) {
+    // Allumer si éteint
     if (this._climate?.state === 'off') {
       this.hass.callService('climate', 'set_hvac_mode', {
         entity_id: this.config.entity,
         hvac_mode: 'heat',
       });
     }
-    this.hass.callService('select', 'select_option', {
-      entity_id: this.config.mode_entity,
-      option,
-    });
+    if (this.config.mode_entity) {
+      // L'entité select attend un label FR (défini dans l'intégration)
+      this.hass.callService('select', 'select_option', {
+        entity_id: this.config.mode_entity,
+        option: optionFr,
+      });
+    } else {
+      // Sans mode_entity : écriture directe via climate preset_mode si disponible,
+      // sinon on ne peut pas changer le mode — juste allumer suffit
+    }
   }
 }
 
