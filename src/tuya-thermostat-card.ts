@@ -380,6 +380,11 @@ export class TuyaThermostatCard extends LitElement {
       font-weight: 500;
     }
 
+    .chip-btn:disabled, .chip-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
     .footer {
       display: flex;
       flex-wrap: wrap;
@@ -496,14 +501,20 @@ export class TuyaThermostatCard extends LitElement {
         <hr class="divider">
 
         <div class="section-label">${t('Mode', 'Mode')}</div>
+        ${!this._isValidEntityId(this.config.mode_entity) ? html`
+          <div style="font-size:0.8em;color:var(--warning-color,#f4b400);margin-bottom:0.4em">
+            ⚠ ${t('Configure mode_entity to change mode.', 'Configurez mode_entity pour changer de mode.')}
+          </div>
+        ` : ''}
         <div class="btn-row">
           <button class="chip-btn${!isOn ? ' selected' : ''}" @click=${() => this._setHvac('off')}>
             ${t('Off', 'Éteint')}
           </button>
           ${modeOptions.map((opt: string) => html`
             <button
-              class="chip-btn${isOn && currentMode === opt ? ' selected' : ''}"
+              class="chip-btn${isOn && currentMode === opt ? ' selected' : ''}${!this._isValidEntityId(this.config.mode_entity) ? ' disabled' : ''}"
               @click=${() => this._activateMode(opt)}
+              ?disabled=${!this._isValidEntityId(this.config.mode_entity)}
             >${TUYA_MODES[opt] ?? opt}</button>
           `)}
         </div>
@@ -535,6 +546,10 @@ export class TuyaThermostatCard extends LitElement {
     });
   }
 
+  private _isValidEntityId(id: any): id is string {
+    return typeof id === 'string' && /^[a-z_]+\.[a-z0-9_]+$/.test(id);
+  }
+
   private _activateMode(optionFr: string) {
     // Allumer si éteint
     if (this._climate?.state === 'off') {
@@ -543,16 +558,11 @@ export class TuyaThermostatCard extends LitElement {
         hvac_mode: 'heat',
       });
     }
-    if (this.config.mode_entity) {
-      // L'entité select attend un label FR (défini dans l'intégration)
-      this.hass.callService('select', 'select_option', {
-        entity_id: this.config.mode_entity,
-        option: optionFr,
-      });
-    } else {
-      // Sans mode_entity : écriture directe via climate preset_mode si disponible,
-      // sinon on ne peut pas changer le mode — juste allumer suffit
-    }
+    if (!this._isValidEntityId(this.config.mode_entity)) return;
+    this.hass.callService('select', 'select_option', {
+      entity_id: this.config.mode_entity,
+      option: optionFr,
+    });
   }
 }
 
