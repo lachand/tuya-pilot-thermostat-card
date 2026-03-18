@@ -1,0 +1,5 @@
+{
+  "name": "Tuya Thermostat Card",
+  "content_in_root": false,
+  "country": ["fr", "en"]
+}

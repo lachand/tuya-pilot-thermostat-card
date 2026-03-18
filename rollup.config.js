@@ -1,0 +1,15 @@
+import resolve from 'rollup-plugin-node-resolve';
+import { terser } from 'rollup-plugin-terser';
+
+export default {
+  input: 'src/tuya-thermostat-card.ts',
+  output: {
+    file: 'dist/tuya-thermostat-card.js',
+    format: 'es',
+    sourcemap: true
+  },
+  plugins: [
+    resolve(),
+    terser()
+  ]
+};

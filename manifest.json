@@ -1,0 +1,10 @@
+{
+  "name": "Tuya Thermostat Card",
+  "description": "Carte Lovelace pour contrôler un thermostat Tuya (LAN)",
+  "version": "0.1.0",
+  "author": "lachand",
+  "repository": "https://github.com/lachand/tuya-thermostat-card",
+  "type": "js",
+  "keywords": ["lovelace", "card", "thermostat", "tuya"],
+  "homeassistant": ">=2024.1.0"
+}
