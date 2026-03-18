@@ -9,6 +9,96 @@ const TUYA_MODES: Record<string, string> = {
   Programming: 'Programmation',
 };
 
+// ---------- Éditeur visuel ----------
+
+@customElement('tuya-thermostat-card-editor')
+export class TuyaThermostatCardEditor extends LitElement {
+  @property({ type: Object }) hass: any;
+  @property({ type: Object }) private _config: any = {};
+
+  static styles = css`
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .full { grid-column: 1 / -1; }
+    label {
+      display: block;
+      font-size: 0.8em;
+      color: var(--secondary-text-color);
+      margin-bottom: 2px;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 8px;
+      border: 1px solid var(--divider-color, #e0e0e0);
+      border-radius: 4px;
+      font-size: 0.95em;
+      background: var(--card-background-color, #fff);
+      color: var(--primary-text-color);
+    }
+    input:focus { outline: 2px solid var(--primary-color); }
+    h4 {
+      grid-column: 1 / -1;
+      margin: 8px 0 2px;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary-text-color);
+    }
+  `;
+
+  setConfig(config: any) {
+    this._config = { ...config };
+  }
+
+  private _changed(key: string, e: Event) {
+    const val = (e.target as HTMLInputElement).value;
+    this._config = { ...this._config, [key]: val || undefined };
+    this.dispatchEvent(new CustomEvent('config-changed', {
+      detail: { config: this._config },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  private _field(key: string, label: string, placeholder = '') {
+    return html`
+      <div>
+        <label>${label}</label>
+        <input
+          type="text"
+          .value=${this._config[key] || ''}
+          placeholder=${placeholder}
+          @change=${(e: Event) => this._changed(key, e)}
+        />
+      </div>
+    `;
+  }
+
+  render() {
+    return html`
+      <div class="grid">
+        <div class="full">${this._field('entity', 'Entité climate *', 'climate.mon_thermostat')}</div>
+        <div class="full">${this._field('name', 'Nom (optionnel)', 'Thermostat salon')}</div>
+
+        <h4>Entités optionnelles</h4>
+        ${this._field('mode_entity',       'Select — Mode',          'select.thermostat_mode')}
+        ${this._field('heating_entity',    'Binary sensor — Chauffe','binary_sensor.thermostat_chauffe')}
+        ${this._field('window_entity',     'Binary sensor — Fenêtre','binary_sensor.thermostat_fenetre')}
+        ${this._field('fault_entity',      'Binary sensor — Défaut', 'binary_sensor.thermostat_alarme')}
+        ${this._field('power_entity',      'Sensor — Puissance',     'sensor.thermostat_puissance')}
+        ${this._field('elec_entity',       'Sensor — Conso élec.',   'sensor.thermostat_electricite')}
+        ${this._field('child_lock_entity', 'Switch — Verrou enfant', 'switch.thermostat_verrou')}
+      </div>
+    `;
+  }
+}
+
+// ---------- Carte principale ----------
+
 @customElement('tuya-thermostat-card')
 export class TuyaThermostatCard extends LitElement {
   @property({ type: Object }) hass: any;
@@ -182,6 +272,17 @@ export class TuyaThermostatCard extends LitElement {
     this.config = config;
   }
 
+  static getConfigElement() {
+    return document.createElement('tuya-thermostat-card-editor');
+  }
+
+  static getStubConfig() {
+    return {
+      entity: 'climate.thermostat',
+      mode_entity: 'select.thermostat_mode',
+    };
+  }
+
   private get _climate() { return this.hass?.states[this.config.entity]; }
   private get _modeEntity() { return this.config.mode_entity ? this.hass?.states[this.config.mode_entity] : null; }
   private get _windowEntity() { return this.config.window_entity ? this.hass?.states[this.config.window_entity] : null; }
@@ -202,30 +303,25 @@ export class TuyaThermostatCard extends LitElement {
     const climate = this._climate;
     const currentTemp: number | undefined = climate.attributes.current_temperature;
     const targetTemp: number | undefined = climate.attributes.temperature;
-    const hvacMode: string = climate.state; // 'off' | 'heat'
+    const hvacMode: string = climate.state;
     const isOn = hvacMode !== 'off';
 
-    // Mode détaillé (entité select séparée)
     const modeEnt = this._modeEntity;
     const currentMode: string | null = modeEnt ? modeEnt.state : null;
     const modeOptions: string[] = modeEnt ? (modeEnt.attributes.options ?? []) : [];
 
-    // Binary sensors
     const windowOpen = this._windowEntity?.state === 'on';
     const fault = this._faultEntity?.state === 'on';
     const heating = this._heatingEntity?.state === 'on';
 
-    // Puissance
     const powerEnt = this._powerEntity;
     const power: number | null = powerEnt ? parseFloat(powerEnt.state) : null;
     const powerUnit: string = powerEnt?.attributes.unit_of_measurement ?? 'W';
 
-    // Statistiques électriques
     const elecEnt = this._elecEntity;
     const elecVal: string | null = elecEnt ? elecEnt.state : null;
     const elecUnit: string = elecEnt?.attributes.unit_of_measurement ?? '';
 
-    // Verrou enfant
     const childLockEnt = this._childLockEntity;
     const childLock: boolean | null = childLockEnt ? childLockEnt.state === 'on' : null;
 
@@ -319,13 +415,6 @@ export class TuyaThermostatCard extends LitElement {
       entity_id: this.config.mode_entity,
       option,
     });
-  }
-
-  static getStubConfig() {
-    return {
-      entity: 'climate.thermostat',
-      mode_entity: 'select.thermostat_mode',
-    };
   }
 }
 
