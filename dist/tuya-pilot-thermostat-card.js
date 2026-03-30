@@ -1,33 +1,33 @@
-function t(t,e,i,s){var n,a=arguments.length,o=a<3?e:null===s?s=Object.getOwnPropertyDescriptor(e,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)o=Reflect.decorate(t,e,i,s);else for(var r=t.length-1;r>=0;r--)(n=t[r])&&(o=(a<3?n(o):a>3?n(e,i,o):n(e,i))||o);return a>3&&o&&Object.defineProperty(e,i,o),o}"function"==typeof SuppressedError&&SuppressedError;
+function t(t,e,i,s){var n,o=arguments.length,a=o<3?e:null===s?s=Object.getOwnPropertyDescriptor(e,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)a=Reflect.decorate(t,e,i,s);else for(var r=t.length-1;r>=0;r--)(n=t[r])&&(a=(o<3?n(a):o>3?n(e,i,a):n(e,i))||a);return o>3&&a&&Object.defineProperty(e,i,a),a}"function"==typeof SuppressedError&&SuppressedError;
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const e=window,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s=Symbol(),n=new WeakMap;let a=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==s)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=n.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&n.set(e,t))}return t}toString(){return this.cssText}};const o=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new a(i,t,s)},r=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new a("string"==typeof t?t:t+"",void 0,s))(e)})(t):t;
+const e=window,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s=Symbol(),n=new WeakMap;let o=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==s)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=n.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&n.set(e,t))}return t}toString(){return this.cssText}};const a=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new o(i,t,s)},r=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new o("string"==typeof t?t:t+"",void 0,s))(e)})(t):t;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var l;const c=window,d=c.trustedTypes,p=d?d.emptyScript:"",h=c.reactiveElementPolyfillSupport,u={toAttribute(t,e){switch(e){case Boolean:t=t?p:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},m=(t,e)=>e!==t&&(e==e||t==t),f={attribute:!0,type:String,converter:u,reflect:!1,hasChanged:m},g="finalized";let _=class extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu()}static addInitializer(t){var e;this.finalize(),(null!==(e=this.h)&&void 0!==e?e:this.h=[]).push(t)}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach((e,i)=>{const s=this._$Ep(i,e);void 0!==s&&(this._$Ev.set(s,i),t.push(s))}),t}static createProperty(t,e=f){if(e.state&&(e.attribute=!1),this.finalize(),this.elementProperties.set(t,e),!e.noAccessor&&!this.prototype.hasOwnProperty(t)){const i="symbol"==typeof t?Symbol():"__"+t,s=this.getPropertyDescriptor(t,i,e);void 0!==s&&Object.defineProperty(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){return{get(){return this[e]},set(s){const n=this[t];this[e]=s,this.requestUpdate(t,n,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||f}static finalize(){if(this.hasOwnProperty(g))return!1;this[g]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,e=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const i of e)this.createProperty(i,t[i])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(r(t))}else void 0!==t&&e.push(r(t));return e}static _$Ep(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach(t=>t(this))}addController(t){var e,i;(null!==(e=this._$ES)&&void 0!==e?e:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(i=t.hostConnected)||void 0===i||i.call(t))}removeController(t){var e;null===(e=this._$ES)||void 0===e||e.splice(this._$ES.indexOf(t)>>>0,1)}_$Eg(){this.constructor.elementProperties.forEach((t,e)=>{this.hasOwnProperty(e)&&(this._$Ei.set(e,this[e]),delete this[e])})}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return((t,s)=>{i?t.adoptedStyleSheets=s.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet):s.forEach(i=>{const s=document.createElement("style"),n=e.litNonce;void 0!==n&&s.setAttribute("nonce",n),s.textContent=i.cssText,t.appendChild(s)})})(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostConnected)||void 0===e?void 0:e.call(t)})}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostDisconnected)||void 0===e?void 0:e.call(t)})}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$EO(t,e,i=f){var s;const n=this.constructor._$Ep(t,i);if(void 0!==n&&!0===i.reflect){const a=(void 0!==(null===(s=i.converter)||void 0===s?void 0:s.toAttribute)?i.converter:u).toAttribute(e,i.type);this._$El=t,null==a?this.removeAttribute(n):this.setAttribute(n,a),this._$El=null}}_$AK(t,e){var i;const s=this.constructor,n=s._$Ev.get(t);if(void 0!==n&&this._$El!==n){const t=s.getPropertyOptions(n),a="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(i=t.converter)||void 0===i?void 0:i.fromAttribute)?t.converter:u;this._$El=n,this[n]=a.fromAttribute(e,t.type),this._$El=null}}requestUpdate(t,e,i){let s=!0;void 0!==t&&(((i=i||this.constructor.getPropertyOptions(t)).hasChanged||m)(this[t],e)?(this._$AL.has(t)||this._$AL.set(t,e),!0===i.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,i))):s=!1),!this.isUpdatePending&&s&&(this._$E_=this._$Ej())}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach((t,e)=>this[e]=t),this._$Ei=void 0);let e=!1;const i=this._$AL;try{e=this.shouldUpdate(i),e?(this.willUpdate(i),null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostUpdate)||void 0===e?void 0:e.call(t)}),this.update(i)):this._$Ek()}catch(t){throw e=!1,this._$Ek(),t}e&&this._$AE(i)}willUpdate(t){}_$AE(t){var e;null===(e=this._$ES)||void 0===e||e.forEach(t=>{var e;return null===(e=t.hostUpdated)||void 0===e?void 0:e.call(t)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return!0}update(t){void 0!==this._$EC&&(this._$EC.forEach((t,e)=>this._$EO(e,this[e],t)),this._$EC=void 0),this._$Ek()}updated(t){}firstUpdated(t){}};
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-var v;_[g]=!0,_.elementProperties=new Map,_.elementStyles=[],_.shadowRootOptions={mode:"open"},null==h||h({ReactiveElement:_}),(null!==(l=c.reactiveElementVersions)&&void 0!==l?l:c.reactiveElementVersions=[]).push("1.6.3");const b=window,y=b.trustedTypes,k=y?y.createPolicy("lit-html",{createHTML:t=>t}):void 0,$="$lit$",x=`lit$${(Math.random()+"").slice(9)}$`,w="?"+x,A=`<${w}>`,S=document,E=()=>S.createComment(""),C=t=>null===t||"object"!=typeof t&&"function"!=typeof t,z=Array.isArray,M="[ \t\n\f\r]",P=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,N=/-->/g,j=/>/g,O=RegExp(`>|${M}(?:([^\\s"'>=/]+)(${M}*=${M}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),T=/'/g,H=/"/g,U=/^(?:script|style|textarea|title)$/i,L=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),R=Symbol.for("lit-noChange"),D=Symbol.for("lit-nothing"),I=new WeakMap,F=S.createTreeWalker(S,129,null,!1);function B(t,e){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==k?k.createHTML(e):e}const V=(t,e)=>{const i=t.length-1,s=[];let n,a=2===e?"<svg>":"",o=P;for(let e=0;e<i;e++){const i=t[e];let r,l,c=-1,d=0;for(;d<i.length&&(o.lastIndex=d,l=o.exec(i),null!==l);)d=o.lastIndex,o===P?"!--"===l[1]?o=N:void 0!==l[1]?o=j:void 0!==l[2]?(U.test(l[2])&&(n=RegExp("</"+l[2],"g")),o=O):void 0!==l[3]&&(o=O):o===O?">"===l[0]?(o=null!=n?n:P,c=-1):void 0===l[1]?c=-2:(c=o.lastIndex-l[2].length,r=l[1],o=void 0===l[3]?O:'"'===l[3]?H:T):o===H||o===T?o=O:o===N||o===j?o=P:(o=O,n=void 0);const p=o===O&&t[e+1].startsWith("/>")?" ":"";a+=o===P?i+A:c>=0?(s.push(r),i.slice(0,c)+$+i.slice(c)+x+p):i+x+(-2===c?(s.push(void 0),e):p)}return[B(t,a+(t[i]||"<?>")+(2===e?"</svg>":"")),s]};class G{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let n=0,a=0;const o=t.length-1,r=this.parts,[l,c]=V(t,e);if(this.el=G.createElement(l,i),F.currentNode=this.el.content,2===e){const t=this.el.content,e=t.firstChild;e.remove(),t.append(...e.childNodes)}for(;null!==(s=F.nextNode())&&r.length<o;){if(1===s.nodeType){if(s.hasAttributes()){const t=[];for(const e of s.getAttributeNames())if(e.endsWith($)||e.startsWith(x)){const i=c[a++];if(t.push(e),void 0!==i){const t=s.getAttribute(i.toLowerCase()+$).split(x),e=/([.?@])?(.*)/.exec(i);r.push({type:1,index:n,name:e[2],strings:t,ctor:"."===e[1]?Z:"?"===e[1]?Y:"@"===e[1]?Q:J})}else r.push({type:6,index:n})}for(const e of t)s.removeAttribute(e)}if(U.test(s.tagName)){const t=s.textContent.split(x),e=t.length-1;if(e>0){s.textContent=y?y.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],E()),F.nextNode(),r.push({type:2,index:++n});s.append(t[e],E())}}}else if(8===s.nodeType)if(s.data===w)r.push({type:2,index:n});else{let t=-1;for(;-1!==(t=s.data.indexOf(x,t+1));)r.push({type:7,index:n}),t+=x.length-1}n++}}static createElement(t,e){const i=S.createElement("template");return i.innerHTML=t,i}}function q(t,e,i=t,s){var n,a,o,r;if(e===R)return e;let l=void 0!==s?null===(n=i._$Co)||void 0===n?void 0:n[s]:i._$Cl;const c=C(e)?void 0:e._$litDirective$;return(null==l?void 0:l.constructor)!==c&&(null===(a=null==l?void 0:l._$AO)||void 0===a||a.call(l,!1),void 0===c?l=void 0:(l=new c(t),l._$AT(t,i,s)),void 0!==s?(null!==(o=(r=i)._$Co)&&void 0!==o?o:r._$Co=[])[s]=l:i._$Cl=l),void 0!==l&&(e=q(t,l._$AS(t,e.values),l,s)),e}class W{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var e;const{el:{content:i},parts:s}=this._$AD,n=(null!==(e=null==t?void 0:t.creationScope)&&void 0!==e?e:S).importNode(i,!0);F.currentNode=n;let a=F.nextNode(),o=0,r=0,l=s[0];for(;void 0!==l;){if(o===l.index){let e;2===l.type?e=new K(a,a.nextSibling,this,t):1===l.type?e=new l.ctor(a,l.name,l.strings,this,t):6===l.type&&(e=new tt(a,this,t)),this._$AV.push(e),l=s[++r]}o!==(null==l?void 0:l.index)&&(a=F.nextNode(),o++)}return F.currentNode=S,n}v(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class K{constructor(t,e,i,s){var n;this.type=2,this._$AH=D,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cp=null===(n=null==s?void 0:s.isConnected)||void 0===n||n}get _$AU(){var t,e;return null!==(e=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==e?e:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===(null==t?void 0:t.nodeType)&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=q(this,t,e),C(t)?t===D||null==t||""===t?(this._$AH!==D&&this._$AR(),this._$AH=D):t!==this._$AH&&t!==R&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):(t=>z(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]))(t)?this.T(t):this._(t)}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t))}_(t){this._$AH!==D&&C(this._$AH)?this._$AA.nextSibling.data=t:this.$(S.createTextNode(t)),this._$AH=t}g(t){var e;const{values:i,_$litType$:s}=t,n="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=G.createElement(B(s.h,s.h[0]),this.options)),s);if((null===(e=this._$AH)||void 0===e?void 0:e._$AD)===n)this._$AH.v(i);else{const t=new W(n,this),e=t.u(this.options);t.v(i),this.$(e),this._$AH=t}}_$AC(t){let e=I.get(t.strings);return void 0===e&&I.set(t.strings,e=new G(t)),e}T(t){z(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const n of t)s===e.length?e.push(i=new K(this.k(E()),this.k(E()),this,this.options)):i=e[s],i._$AI(n),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){var i;for(null===(i=this._$AP)||void 0===i||i.call(this,!1,!0,e);t&&t!==this._$AB;){const e=t.nextSibling;t.remove(),t=e}}setConnected(t){var e;void 0===this._$AM&&(this._$Cp=t,null===(e=this._$AP)||void 0===e||e.call(this,t))}}class J{constructor(t,e,i,s,n){this.type=1,this._$AH=D,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=n,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=D}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,e=this,i,s){const n=this.strings;let a=!1;if(void 0===n)t=q(this,t,e,0),a=!C(t)||t!==this._$AH&&t!==R,a&&(this._$AH=t);else{const s=t;let o,r;for(t=n[0],o=0;o<n.length-1;o++)r=q(this,s[i+o],e,o),r===R&&(r=this._$AH[o]),a||(a=!C(r)||r!==this._$AH[o]),r===D?t=D:t!==D&&(t+=(null!=r?r:"")+n[o+1]),this._$AH[o]=r}a&&!s&&this.j(t)}j(t){t===D?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"")}}class Z extends J{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===D?void 0:t}}const X=y?y.emptyScript:"";class Y extends J{constructor(){super(...arguments),this.type=4}j(t){t&&t!==D?this.element.setAttribute(this.name,X):this.element.removeAttribute(this.name)}}class Q extends J{constructor(t,e,i,s,n){super(t,e,i,s,n),this.type=5}_$AI(t,e=this){var i;if((t=null!==(i=q(this,t,e,0))&&void 0!==i?i:D)===R)return;const s=this._$AH,n=t===D&&s!==D||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,a=t!==D&&(s===D||n);n&&this.element.removeEventListener(this.name,this,s),a&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){var e,i;"function"==typeof this._$AH?this._$AH.call(null!==(i=null===(e=this.options)||void 0===e?void 0:e.host)&&void 0!==i?i:this.element,t):this._$AH.handleEvent(t)}}class tt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){q(this,t)}}const et=b.litHtmlPolyfillSupport;null==et||et(G,K),(null!==(v=b.litHtmlVersions)&&void 0!==v?v:b.litHtmlVersions=[]).push("2.8.0");
+ */var l;const c=window,d=c.trustedTypes,p=d?d.emptyScript:"",h=c.reactiveElementPolyfillSupport,u={toAttribute(t,e){switch(e){case Boolean:t=t?p:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},m=(t,e)=>e!==t&&(e==e||t==t),f={attribute:!0,type:String,converter:u,reflect:!1,hasChanged:m},_="finalized";let g=class extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu()}static addInitializer(t){var e;this.finalize(),(null!==(e=this.h)&&void 0!==e?e:this.h=[]).push(t)}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach((e,i)=>{const s=this._$Ep(i,e);void 0!==s&&(this._$Ev.set(s,i),t.push(s))}),t}static createProperty(t,e=f){if(e.state&&(e.attribute=!1),this.finalize(),this.elementProperties.set(t,e),!e.noAccessor&&!this.prototype.hasOwnProperty(t)){const i="symbol"==typeof t?Symbol():"__"+t,s=this.getPropertyDescriptor(t,i,e);void 0!==s&&Object.defineProperty(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){return{get(){return this[e]},set(s){const n=this[t];this[e]=s,this.requestUpdate(t,n,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||f}static finalize(){if(this.hasOwnProperty(_))return!1;this[_]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,e=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const i of e)this.createProperty(i,t[i])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(r(t))}else void 0!==t&&e.push(r(t));return e}static _$Ep(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach(t=>t(this))}addController(t){var e,i;(null!==(e=this._$ES)&&void 0!==e?e:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(i=t.hostConnected)||void 0===i||i.call(t))}removeController(t){var e;null===(e=this._$ES)||void 0===e||e.splice(this._$ES.indexOf(t)>>>0,1)}_$Eg(){this.constructor.elementProperties.forEach((t,e)=>{this.hasOwnProperty(e)&&(this._$Ei.set(e,this[e]),delete this[e])})}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return((t,s)=>{i?t.adoptedStyleSheets=s.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet):s.forEach(i=>{const s=document.createElement("style"),n=e.litNonce;void 0!==n&&s.setAttribute("nonce",n),s.textContent=i.cssText,t.appendChild(s)})})(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostConnected)||void 0===e?void 0:e.call(t)})}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostDisconnected)||void 0===e?void 0:e.call(t)})}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$EO(t,e,i=f){var s;const n=this.constructor._$Ep(t,i);if(void 0!==n&&!0===i.reflect){const o=(void 0!==(null===(s=i.converter)||void 0===s?void 0:s.toAttribute)?i.converter:u).toAttribute(e,i.type);this._$El=t,null==o?this.removeAttribute(n):this.setAttribute(n,o),this._$El=null}}_$AK(t,e){var i;const s=this.constructor,n=s._$Ev.get(t);if(void 0!==n&&this._$El!==n){const t=s.getPropertyOptions(n),o="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(i=t.converter)||void 0===i?void 0:i.fromAttribute)?t.converter:u;this._$El=n,this[n]=o.fromAttribute(e,t.type),this._$El=null}}requestUpdate(t,e,i){let s=!0;void 0!==t&&(((i=i||this.constructor.getPropertyOptions(t)).hasChanged||m)(this[t],e)?(this._$AL.has(t)||this._$AL.set(t,e),!0===i.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,i))):s=!1),!this.isUpdatePending&&s&&(this._$E_=this._$Ej())}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach((t,e)=>this[e]=t),this._$Ei=void 0);let e=!1;const i=this._$AL;try{e=this.shouldUpdate(i),e?(this.willUpdate(i),null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostUpdate)||void 0===e?void 0:e.call(t)}),this.update(i)):this._$Ek()}catch(t){throw e=!1,this._$Ek(),t}e&&this._$AE(i)}willUpdate(t){}_$AE(t){var e;null===(e=this._$ES)||void 0===e||e.forEach(t=>{var e;return null===(e=t.hostUpdated)||void 0===e?void 0:e.call(t)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return!0}update(t){void 0!==this._$EC&&(this._$EC.forEach((t,e)=>this._$EO(e,this[e],t)),this._$EC=void 0),this._$Ek()}updated(t){}firstUpdated(t){}};
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-var it,st;class nt extends _{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{var s,n;const a=null!==(s=null==i?void 0:i.renderBefore)&&void 0!==s?s:e;let o=a._$litPart$;if(void 0===o){const t=null!==(n=null==i?void 0:i.renderBefore)&&void 0!==n?n:null;a._$litPart$=o=new K(e.insertBefore(E(),t),t,void 0,null!=i?i:{})}return o._$AI(t),o})(e,this.renderRoot,this.renderOptions)}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0)}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1)}render(){return R}}nt.finalized=!0,nt._$litElement$=!0,null===(it=globalThis.litElementHydrateSupport)||void 0===it||it.call(globalThis,{LitElement:nt});const at=globalThis.litElementPolyfillSupport;null==at||at({LitElement:nt}),(null!==(st=globalThis.litElementVersions)&&void 0!==st?st:globalThis.litElementVersions=[]).push("3.3.3");
+var v;g[_]=!0,g.elementProperties=new Map,g.elementStyles=[],g.shadowRootOptions={mode:"open"},null==h||h({ReactiveElement:g}),(null!==(l=c.reactiveElementVersions)&&void 0!==l?l:c.reactiveElementVersions=[]).push("1.6.3");const y=window,b=y.trustedTypes,k=b?b.createPolicy("lit-html",{createHTML:t=>t}):void 0,$="$lit$",x=`lit$${(Math.random()+"").slice(9)}$`,w="?"+x,A=`<${w}>`,S=document,C=()=>S.createComment(""),E=t=>null===t||"object"!=typeof t&&"function"!=typeof t,z=Array.isArray,M="[ \t\n\f\r]",P=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,N=/-->/g,j=/>/g,T=RegExp(`>|${M}(?:([^\\s"'>=/]+)(${M}*=${M}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),O=/'/g,L=/"/g,H=/^(?:script|style|textarea|title)$/i,U=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),R=Symbol.for("lit-noChange"),D=Symbol.for("lit-nothing"),I=new WeakMap,F=S.createTreeWalker(S,129,null,!1);function B(t,e){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==k?k.createHTML(e):e}const V=(t,e)=>{const i=t.length-1,s=[];let n,o=2===e?"<svg>":"",a=P;for(let e=0;e<i;e++){const i=t[e];let r,l,c=-1,d=0;for(;d<i.length&&(a.lastIndex=d,l=a.exec(i),null!==l);)d=a.lastIndex,a===P?"!--"===l[1]?a=N:void 0!==l[1]?a=j:void 0!==l[2]?(H.test(l[2])&&(n=RegExp("</"+l[2],"g")),a=T):void 0!==l[3]&&(a=T):a===T?">"===l[0]?(a=null!=n?n:P,c=-1):void 0===l[1]?c=-2:(c=a.lastIndex-l[2].length,r=l[1],a=void 0===l[3]?T:'"'===l[3]?L:O):a===L||a===O?a=T:a===N||a===j?a=P:(a=T,n=void 0);const p=a===T&&t[e+1].startsWith("/>")?" ":"";o+=a===P?i+A:c>=0?(s.push(r),i.slice(0,c)+$+i.slice(c)+x+p):i+x+(-2===c?(s.push(void 0),e):p)}return[B(t,o+(t[i]||"<?>")+(2===e?"</svg>":"")),s]};class G{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let n=0,o=0;const a=t.length-1,r=this.parts,[l,c]=V(t,e);if(this.el=G.createElement(l,i),F.currentNode=this.el.content,2===e){const t=this.el.content,e=t.firstChild;e.remove(),t.append(...e.childNodes)}for(;null!==(s=F.nextNode())&&r.length<a;){if(1===s.nodeType){if(s.hasAttributes()){const t=[];for(const e of s.getAttributeNames())if(e.endsWith($)||e.startsWith(x)){const i=c[o++];if(t.push(e),void 0!==i){const t=s.getAttribute(i.toLowerCase()+$).split(x),e=/([.?@])?(.*)/.exec(i);r.push({type:1,index:n,name:e[2],strings:t,ctor:"."===e[1]?J:"?"===e[1]?Z:"@"===e[1]?Q:X})}else r.push({type:6,index:n})}for(const e of t)s.removeAttribute(e)}if(H.test(s.tagName)){const t=s.textContent.split(x),e=t.length-1;if(e>0){s.textContent=b?b.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],C()),F.nextNode(),r.push({type:2,index:++n});s.append(t[e],C())}}}else if(8===s.nodeType)if(s.data===w)r.push({type:2,index:n});else{let t=-1;for(;-1!==(t=s.data.indexOf(x,t+1));)r.push({type:7,index:n}),t+=x.length-1}n++}}static createElement(t,e){const i=S.createElement("template");return i.innerHTML=t,i}}function q(t,e,i=t,s){var n,o,a,r;if(e===R)return e;let l=void 0!==s?null===(n=i._$Co)||void 0===n?void 0:n[s]:i._$Cl;const c=E(e)?void 0:e._$litDirective$;return(null==l?void 0:l.constructor)!==c&&(null===(o=null==l?void 0:l._$AO)||void 0===o||o.call(l,!1),void 0===c?l=void 0:(l=new c(t),l._$AT(t,i,s)),void 0!==s?(null!==(a=(r=i)._$Co)&&void 0!==a?a:r._$Co=[])[s]=l:i._$Cl=l),void 0!==l&&(e=q(t,l._$AS(t,e.values),l,s)),e}class K{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var e;const{el:{content:i},parts:s}=this._$AD,n=(null!==(e=null==t?void 0:t.creationScope)&&void 0!==e?e:S).importNode(i,!0);F.currentNode=n;let o=F.nextNode(),a=0,r=0,l=s[0];for(;void 0!==l;){if(a===l.index){let e;2===l.type?e=new W(o,o.nextSibling,this,t):1===l.type?e=new l.ctor(o,l.name,l.strings,this,t):6===l.type&&(e=new tt(o,this,t)),this._$AV.push(e),l=s[++r]}a!==(null==l?void 0:l.index)&&(o=F.nextNode(),a++)}return F.currentNode=S,n}v(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class W{constructor(t,e,i,s){var n;this.type=2,this._$AH=D,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cp=null===(n=null==s?void 0:s.isConnected)||void 0===n||n}get _$AU(){var t,e;return null!==(e=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==e?e:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===(null==t?void 0:t.nodeType)&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=q(this,t,e),E(t)?t===D||null==t||""===t?(this._$AH!==D&&this._$AR(),this._$AH=D):t!==this._$AH&&t!==R&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):(t=>z(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]))(t)?this.T(t):this._(t)}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t))}_(t){this._$AH!==D&&E(this._$AH)?this._$AA.nextSibling.data=t:this.$(S.createTextNode(t)),this._$AH=t}g(t){var e;const{values:i,_$litType$:s}=t,n="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=G.createElement(B(s.h,s.h[0]),this.options)),s);if((null===(e=this._$AH)||void 0===e?void 0:e._$AD)===n)this._$AH.v(i);else{const t=new K(n,this),e=t.u(this.options);t.v(i),this.$(e),this._$AH=t}}_$AC(t){let e=I.get(t.strings);return void 0===e&&I.set(t.strings,e=new G(t)),e}T(t){z(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const n of t)s===e.length?e.push(i=new W(this.k(C()),this.k(C()),this,this.options)):i=e[s],i._$AI(n),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){var i;for(null===(i=this._$AP)||void 0===i||i.call(this,!1,!0,e);t&&t!==this._$AB;){const e=t.nextSibling;t.remove(),t=e}}setConnected(t){var e;void 0===this._$AM&&(this._$Cp=t,null===(e=this._$AP)||void 0===e||e.call(this,t))}}class X{constructor(t,e,i,s,n){this.type=1,this._$AH=D,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=n,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=D}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,e=this,i,s){const n=this.strings;let o=!1;if(void 0===n)t=q(this,t,e,0),o=!E(t)||t!==this._$AH&&t!==R,o&&(this._$AH=t);else{const s=t;let a,r;for(t=n[0],a=0;a<n.length-1;a++)r=q(this,s[i+a],e,a),r===R&&(r=this._$AH[a]),o||(o=!E(r)||r!==this._$AH[a]),r===D?t=D:t!==D&&(t+=(null!=r?r:"")+n[a+1]),this._$AH[a]=r}o&&!s&&this.j(t)}j(t){t===D?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"")}}class J extends X{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===D?void 0:t}}const Y=b?b.emptyScript:"";class Z extends X{constructor(){super(...arguments),this.type=4}j(t){t&&t!==D?this.element.setAttribute(this.name,Y):this.element.removeAttribute(this.name)}}class Q extends X{constructor(t,e,i,s,n){super(t,e,i,s,n),this.type=5}_$AI(t,e=this){var i;if((t=null!==(i=q(this,t,e,0))&&void 0!==i?i:D)===R)return;const s=this._$AH,n=t===D&&s!==D||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,o=t!==D&&(s===D||n);n&&this.element.removeEventListener(this.name,this,s),o&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){var e,i;"function"==typeof this._$AH?this._$AH.call(null!==(i=null===(e=this.options)||void 0===e?void 0:e.host)&&void 0!==i?i:this.element,t):this._$AH.handleEvent(t)}}class tt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){q(this,t)}}const et=y.litHtmlPolyfillSupport;null==et||et(G,W),(null!==(v=y.litHtmlVersions)&&void 0!==v?v:y.litHtmlVersions=[]).push("2.8.0");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const ot=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e):((t,e)=>{const{kind:i,elements:s}=e;return{kind:i,elements:s,finisher(e){customElements.define(t,e)}}})(t,e),rt=(t,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(i){i.createProperty(e.key,t)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this))},finisher(i){i.createProperty(e.key,t)}};
+var it,st;class nt extends g{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{var s,n;const o=null!==(s=null==i?void 0:i.renderBefore)&&void 0!==s?s:e;let a=o._$litPart$;if(void 0===a){const t=null!==(n=null==i?void 0:i.renderBefore)&&void 0!==n?n:null;o._$litPart$=a=new W(e.insertBefore(C(),t),t,void 0,null!=i?i:{})}return a._$AI(t),a})(e,this.renderRoot,this.renderOptions)}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0)}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1)}render(){return R}}nt.finalized=!0,nt._$litElement$=!0,null===(it=globalThis.litElementHydrateSupport)||void 0===it||it.call(globalThis,{LitElement:nt});const ot=globalThis.litElementPolyfillSupport;null==ot||ot({LitElement:nt}),(null!==(st=globalThis.litElementVersions)&&void 0!==st?st:globalThis.litElementVersions=[]).push("3.3.3");
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const at=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e):((t,e)=>{const{kind:i,elements:s}=e;return{kind:i,elements:s,finisher(e){customElements.define(t,e)}}})(t,e),rt=(t,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(i){i.createProperty(e.key,t)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this))},finisher(i){i.createProperty(e.key,t)}};
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -43,7 +43,7 @@ const ot=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-console.warn("The main 'lit-element' module entrypoint is deprecated. Please update your imports to use the 'lit' package: 'lit' and 'lit/decorators.ts' or import from 'lit-element/lit-element.ts'. See https://lit.dev/msg/deprecated-import-path for more information."),(()=>{if(document.querySelector("#kinetic-fonts"))return;const t=Object.assign(document.createElement("link"),{id:"kinetic-fonts",rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"});document.head.appendChild(t)})();const dt={Standby:{fr:"Éteint",label:"Éteint",icon:"power_settings_new",color:"#adaaaa"},Comfort:{fr:"Confort",label:"Confort",icon:"local_fire_department",color:"#8eff71"},ECO:{fr:"Éco",label:"Éco",icon:"eco",color:"#6bfe9c"},Anti_forst:{fr:"Hors-gel",label:"Hors-gel",icon:"ac_unit",color:"#69daff"},Thermostat:{fr:"Températures",label:"Temp.",icon:"device_thermostat",color:"#8eff71"},Programming:{fr:"Programmation",label:"Prog.",icon:"schedule",color:"#69daff"}},pt=Object.fromEntries(Object.entries(dt).map(([t,e])=>[e.fr,t])),ht=[{name:"Nuit",start:"22:00",temperature:17},{name:"Matin",start:"06:30",temperature:20},{name:"Journée",start:"09:00",temperature:18},{name:"Soir",start:"17:30",temperature:21}],ut={_mode:"mode_entity",_heating:"heating_entity",_window:"window_entity",_fault:"fault_entity",_power:"power_entity",_child_lock:"child_lock_entity",_upper_temp:"upper_temp_entity",_lower_temp:"lower_temp_entity",_boost:"boost_entity",_holiday:"holiday_entity"};let mt=class extends nt{constructor(){super(...arguments),this._config={},this._autoStatus="",this._modeFilter=t=>(t.attributes.options?.length??0)>2}setConfig(t){this._config={...t}}_changed(t,e){this._config={...this._config,[t]:e||void 0},this._fire()}_fire(){this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0}))}_autoDetect(){const t=this._config.entity;if(!t)return void(this._autoStatus="Sélectionnez d'abord l'entité climate.");let e=[];if(this.hass?.entities){const i=this.hass.entities[t];i?.config_entry_id?e=Object.values(this.hass.entities).filter(e=>e.config_entry_id===i.config_entry_id&&e.entity_id!==t):i?.device_id&&(e=Object.values(this.hass.entities).filter(e=>e.device_id===i.device_id&&e.entity_id!==t))}if(!e.length&&this.hass?.states){const i=t.split(".")[1].replace(/_thermostat$|_climate$/,"");e=Object.keys(this.hass.states).filter(e=>e!==t&&e.split(".")[1].startsWith(i)).map(t=>({entity_id:t,unique_id:""}))}if(!e.length)return void(this._autoStatus="Aucune entité associée trouvée.");const i={};for(const t of e){const e=(t.unique_id??"").toLowerCase(),s=t.entity_id,n=s.split(".")[0],a=s.split(".")[1].toLowerCase();for(const[t,n]of Object.entries(ut))if(e.endsWith(t)&&!i[n]){i[n]=s;break}if("select"!==n||i.mode_entity)"binary_sensor"===n?!i.heating_entity&&/heat|chauffe|running/.test(a)?i.heating_entity=s:!i.window_entity&&/window|fen|vitre/.test(a)?i.window_entity=s:!i.fault_entity&&/fault|alarm|d.faut/.test(a)&&(i.fault_entity=s):"sensor"===n?!i.power_entity&&/power|puissance/.test(a)?i.power_entity=s:!i.elec_entity&&/elec|conso|statistic/.test(a)&&(i.elec_entity=s):"switch"===n&&!i.child_lock_entity&&/child|lock|verrou/.test(a)?i.child_lock_entity=s:"number"===n&&(!i.upper_temp_entity&&/upper|haute|max/.test(a)?i.upper_temp_entity=s:!i.lower_temp_entity&&/lower|basse|min/.test(a)?i.lower_temp_entity=s:!i.boost_entity&&/boost/.test(a)?i.boost_entity=s:!i.holiday_entity&&/holiday|vacanc/.test(a)&&(i.holiday_entity=s));else{const t=this.hass?.states[s]?.attributes?.options;(!t||t.length>2)&&(i.mode_entity=s)}}const s=Object.keys(i).length;s?(this._config={...this._config,...i},this._autoStatus=`${s} entité(s) détectée(s).`,this._fire()):this._autoStatus="Aucune entité détectée."}_picker(t,e,i,s){return L`
+console.warn("The main 'lit-element' module entrypoint is deprecated. Please update your imports to use the 'lit' package: 'lit' and 'lit/decorators.ts' or import from 'lit-element/lit-element.ts'. See https://lit.dev/msg/deprecated-import-path for more information."),(()=>{if(document.querySelector("#kinetic-fonts"))return;const t=Object.assign(document.createElement("link"),{id:"kinetic-fonts",rel:"stylesheet",href:"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"});document.head.appendChild(t)})();const dt={Standby:{fr:"Éteint",label:"Éteint",icon:"power_settings_new",color:"#adaaaa"},Comfort:{fr:"Confort",label:"Confort",icon:"local_fire_department",color:"#8eff71"},ECO:{fr:"Éco",label:"Éco",icon:"eco",color:"#6bfe9c"},Anti_forst:{fr:"Hors-gel",label:"Hors-gel",icon:"ac_unit",color:"#69daff"},Thermostat:{fr:"Températures",label:"Temp.",icon:"device_thermostat",color:"#8eff71"},Programming:{fr:"Programmation",label:"Prog.",icon:"schedule",color:"#69daff"}},pt=Object.fromEntries(Object.entries(dt).map(([t,e])=>[e.fr,t])),ht=[{name:"Nuit",start:"22:00",temperature:17},{name:"Matin",start:"06:30",temperature:20},{name:"Journée",start:"09:00",temperature:18},{name:"Soir",start:"17:30",temperature:21}],ut={_mode:"mode_entity",_heating:"heating_entity",_window:"window_entity",_fault:"fault_entity",_power:"power_entity",_child_lock:"child_lock_entity",_upper_temp:"upper_temp_entity",_lower_temp:"lower_temp_entity",_boost:"boost_entity",_holiday:"holiday_entity"};let mt=class extends nt{constructor(){super(...arguments),this._config={},this._autoStatus="",this._modeFilter=t=>(t.attributes.options?.length??0)>2}setConfig(t){this._config={...t}}_changed(t,e){this._config={...this._config,[t]:e||void 0},this._fire()}_fire(){this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0}))}_autoDetect(){const t=this._config.entity;if(!t)return void(this._autoStatus="Sélectionnez d'abord l'entité climate.");let e=[];if(this.hass?.entities){const i=this.hass.entities[t];i?.config_entry_id?e=Object.values(this.hass.entities).filter(e=>e.config_entry_id===i.config_entry_id&&e.entity_id!==t):i?.device_id&&(e=Object.values(this.hass.entities).filter(e=>e.device_id===i.device_id&&e.entity_id!==t))}if(!e.length&&this.hass?.states){const i=t.split(".")[1].replace(/_thermostat$|_climate$/,"");e=Object.keys(this.hass.states).filter(e=>e!==t&&e.split(".")[1].startsWith(i)).map(t=>({entity_id:t,unique_id:""}))}if(!e.length)return void(this._autoStatus="Aucune entité associée trouvée.");const i={};for(const t of e){const e=(t.unique_id??"").toLowerCase(),s=t.entity_id,n=s.split(".")[0],o=s.split(".")[1].toLowerCase();for(const[t,n]of Object.entries(ut))if(e.endsWith(t)&&!i[n]){i[n]=s;break}if("select"!==n||i.mode_entity)"binary_sensor"===n?!i.heating_entity&&/heat|chauffe|running/.test(o)?i.heating_entity=s:!i.window_entity&&/window|fen|vitre/.test(o)?i.window_entity=s:!i.fault_entity&&/fault|alarm|d.faut/.test(o)&&(i.fault_entity=s):"sensor"===n?!i.power_entity&&/power|puissance/.test(o)?i.power_entity=s:!i.elec_entity&&/elec|conso|statistic/.test(o)&&(i.elec_entity=s):"switch"===n&&!i.child_lock_entity&&/child|lock|verrou/.test(o)?i.child_lock_entity=s:"number"===n&&(!i.upper_temp_entity&&/upper|haute|max/.test(o)?i.upper_temp_entity=s:!i.lower_temp_entity&&/lower|basse|min/.test(o)?i.lower_temp_entity=s:!i.boost_entity&&/boost/.test(o)?i.boost_entity=s:!i.holiday_entity&&/holiday|vacanc/.test(o)&&(i.holiday_entity=s));else{const t=this.hass?.states[s]?.attributes?.options;(!t||t.length>2)&&(i.mode_entity=s)}}const s=Object.keys(i).length;s?(this._config={...this._config,...i},this._autoStatus=`${s} entité(s) détectée(s).`,this._fire()):this._autoStatus="Aucune entité détectée."}_picker(t,e,i,s){return U`
       <ha-entity-picker
         .hass=${this.hass}
         .value=${this._config[t]||""}
@@ -53,7 +53,7 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
         allow-custom-entity
         @value-changed=${e=>this._changed(t,e.detail.value)}
       ></ha-entity-picker>
-    `}render(){return L`
+    `}render(){return U`
       <div class="grid">
         ${this._picker("entity","Entité climate *","climate")}
         <paper-input
@@ -65,7 +65,7 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
 
         <div class="auto-row">
           <button class="auto-btn" @click=${()=>this._autoDetect()}>Autodétection</button>
-          ${this._autoStatus?L`<span class="auto-status">${this._autoStatus}</span>`:""}
+          ${this._autoStatus?U`<span class="auto-status">${this._autoStatus}</span>`:""}
         </div>
 
         <h4>Contrôle</h4>
@@ -87,7 +87,7 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
         ${this._picker("boost_entity","Number — Durée boost (min)","number")}
         ${this._picker("holiday_entity","Number — Mode vacances (j)","number")}
       </div>
-    `}};mt.styles=o`
+    `}};mt.styles=a`
     .grid { display: grid; gap: 8px; }
     h4 {
       margin: 10px 0 2px;
@@ -108,8 +108,8 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
     }
     .auto-btn:hover { background: var(--primary-color); color: #fff; }
     .auto-status { font-size: 0.78em; color: var(--secondary-text-color); }
-  `,t([lt({type:Object})],mt.prototype,"hass",void 0),t([lt({type:Object})],mt.prototype,"_config",void 0),t([lt({type:String})],mt.prototype,"_autoStatus",void 0),mt=t([ot("tuya-thermostat-card-editor")],mt);let ft=class extends nt{constructor(){super(...arguments),this._tab="climate"}setConfig(t){if(!t.entity)throw new Error("entity (climate) est requis");this.config=t}static getConfigElement(){return document.createElement("tuya-thermostat-card-editor")}static getStubConfig(){return{entity:"climate.thermostat",mode_entity:"select.thermostat_mode"}}get _cl(){return this.hass?.states[this.config.entity]}_ent(t){return this.config[t]?this.hass?.states[this.config[t]]:null}_isValid(t){return"string"==typeof t&&/^[a-z_]+\.[a-z0-9_]+$/.test(t)}_call(t,e,i,s){this.hass.callService(t,e,i,{entity_id:s})}_gaugeArc(t,e,i){const s=2*Math.PI*44,n=Math.max(0,Math.min(1,(t-e)/(i-e)))*s;return`${n.toFixed(1)} ${(s-n+.01).toFixed(1)}`}_currentModeKey(){const t=this._ent("mode_entity");if(!t)return null;const e=t.state;return dt[e]?e:pt[e]??null}_adjustTemp(t){const e=this._cl?.attributes.temperature??20;this._call("climate","set_temperature",{temperature:Math.round(2*(e+t))/2},this.config.entity)}_slots(){return this.config.slots??ht}_activeSlot(){const t=this._slots(),e=new Date,i=60*e.getHours()+e.getMinutes(),s=[...t].sort((t,e)=>this._toMins(t.start)-this._toMins(e.start));let n=s[s.length-1];for(const t of s)this._toMins(t.start)<=i&&(n=t);return n}_toMins(t){const[e,i]=t.split(":").map(Number);return 60*e+i}_activateMode(t){if("Standby"===t)return void this._call("climate","set_hvac_mode",{hvac_mode:"off"},this.config.entity);if("off"===this._cl?.state&&this._call("climate","set_hvac_mode",{hvac_mode:"heat"},this.config.entity),"Programming"===t){const t=this._activeSlot();this._call("climate","set_temperature",{temperature:t.temperature},this.config.entity),this._tab="schedule"}if(!this._isValid(this.config.mode_entity))return;const e=this._ent("mode_entity"),i=(e?.attributes.options??[]).includes(t)?t:dt[t]?.fr??t;this._call("select","select_option",{option:i},this.config.mode_entity)}_toggleChildLock(){const t=this.config.child_lock_entity;if(!this._isValid(t))return;const e="on"===this._ent("child_lock_entity")?.state;this._call("switch",e?"turn_off":"turn_on",{},t)}_adjustNumber(t,e){const i=this.config[t];if(!this._isValid(i))return;const s=this._ent(t),n=parseFloat(s?.state??"0"),a=parseFloat(s?.attributes.step??"1"),o=parseFloat(s?.attributes.min??"0"),r=parseFloat(s?.attributes.max??"999"),l=Math.max(o,Math.min(r,Math.round((n+e)/a)*a));this._call("number","set_value",{value:l},i)}_renderClimate(){const t=this._cl,e="off"!==t?.state,i=t?.attributes.current_temperature??0,s=t?.attributes.temperature??20,n=t?.attributes.min_temp??5,a=t?.attributes.max_temp??35,o="on"===this._ent("heating_entity")?.state,r="on"===this._ent("window_entity")?.state,l="on"===this._ent("fault_entity")?.state,c=this._currentModeKey(),d=this._isValid(this.config.mode_entity),p=this._gaugeArc(i,n,a);return L`
-      ${r||l?L`
+  `,t([lt({type:Object})],mt.prototype,"hass",void 0),t([lt({type:Object})],mt.prototype,"_config",void 0),t([lt({type:String})],mt.prototype,"_autoStatus",void 0),mt=t([at("tuya-thermostat-card-editor")],mt);let ft=class extends nt{constructor(){super(...arguments),this._tab="climate",this._opt={},this._toast="",this._timers={}}setConfig(t){if(!t.entity)throw new Error("entity (climate) est requis");this.config=t}static getConfigElement(){return document.createElement("tuya-thermostat-card-editor")}static getStubConfig(){return{entity:"climate.thermostat",mode_entity:"select.thermostat_mode"}}get _cl(){return this.hass?.states[this.config.entity]}_ent(t){return this.config[t]?this.hass?.states[this.config[t]]:null}_isValid(t){return"string"==typeof t&&/^[a-z_]+\.[a-z0-9_]+$/.test(t)}_call(t,e,i,s){this.hass.callService(t,e,i,{entity_id:s})}_optCall(t,e,i,s,n,o=8e3){this._opt={...this._opt,[t]:e},this._timers[t]&&clearTimeout(this._timers[t]),s(),this._timers[t]=setTimeout(()=>{if(delete this._timers[t],n()){const e={...this._opt};delete e[t],this._opt=e}else this._opt={...this._opt,[t]:i},this._showToast("Action non confirmée — état précédent restauré"),setTimeout(()=>{const e={...this._opt};delete e[t],this._opt=e},3e3)},o)}_showToast(t){this._toast=t,setTimeout(()=>{this._toast=""},4e3)}_gaugeArc(t,e,i){const s=2*Math.PI*44,n=Math.max(0,Math.min(1,(t-e)/(i-e)))*s;return`${n.toFixed(1)} ${(s-n+.01).toFixed(1)}`}_currentModeKey(){const t=this._ent("mode_entity");if(!t)return null;const e=t.state;return dt[e]?e:pt[e]??null}_adjustTemp(t){const e=this._cl?.attributes.temperature??20,i="temp"in this._opt?this._opt.temp:e,s=Math.round(2*(i+t))/2;this._optCall("temp",s,e,()=>this._call("climate","set_temperature",{temperature:s},this.config.entity),()=>this._cl?.attributes.temperature===s)}_slots(){return this.config.slots??ht}_activeSlot(){const t=this._slots(),e=new Date,i=60*e.getHours()+e.getMinutes(),s=[...t].sort((t,e)=>this._toMins(t.start)-this._toMins(e.start));let n=s[s.length-1];for(const t of s)this._toMins(t.start)<=i&&(n=t);return n}_toMins(t){const[e,i]=t.split(":").map(Number);return 60*e+i}_activateMode(t){const e="mode"in this._opt?this._opt.mode:this._currentModeKey();this._optCall("mode",t,e,()=>{if("Standby"===t)return void this._call("climate","set_hvac_mode",{hvac_mode:"off"},this.config.entity);if("off"===this._cl?.state&&this._call("climate","set_hvac_mode",{hvac_mode:"heat"},this.config.entity),"Programming"===t){const t=this._activeSlot();this._call("climate","set_temperature",{temperature:t.temperature},this.config.entity),this._tab="schedule"}if(!this._isValid(this.config.mode_entity))return;const e=this._ent("mode_entity"),i=(e?.attributes.options??[]).includes(t)?t:dt[t]?.fr??t;this._call("select","select_option",{option:i},this.config.mode_entity)},()=>"Standby"===t?"off"===this._cl?.state:this._currentModeKey()===t)}_toggleChildLock(){const t=this.config.child_lock_entity;if(!this._isValid(t))return;const e="on"===this._ent("child_lock_entity")?.state,i=!("childLock"in this._opt?this._opt.childLock:e);this._optCall("childLock",i,e,()=>this._call("switch",i?"turn_on":"turn_off",{},t),()=>"on"===this._ent("child_lock_entity")?.state===i)}_adjustNumber(t,e){const i=this.config[t];if(!this._isValid(i))return;const s=this._ent(t),n=parseFloat(s?.attributes.step??"1"),o=parseFloat(s?.attributes.min??"0"),a=parseFloat(s?.attributes.max??"999"),r=parseFloat(s?.state??"0"),l=t in this._opt?this._opt[t]:r,c=Math.max(o,Math.min(a,Math.round((l+e)/n)*n));this._optCall(t,c,r,()=>this._call("number","set_value",{value:c},i),()=>Math.abs(parseFloat(this._ent(t)?.state??"0")-c)<.01)}_renderClimate(){const t=this._cl,e="off"!==t?.state,i=t?.attributes.current_temperature??0,s=("temp"in this._opt?this._opt.temp:t?.attributes.temperature)??20,n=t?.attributes.min_temp??5,o=t?.attributes.max_temp??35,a="on"===this._ent("heating_entity")?.state,r="on"===this._ent("window_entity")?.state,l="on"===this._ent("fault_entity")?.state,c=this._currentModeKey(),d="mode"in this._opt?this._opt.mode:void 0,p=this._isValid(this.config.mode_entity),h=this._gaugeArc(i,n,o);return U`
+      ${r||l?U`
         <div class="k-alert">
           <span class="ms fill">${r?"window":"warning"}</span>
           ${r?"Fenêtre ouverte détectée":"Défaut détecté — vérifiez l'appareil"}
@@ -128,11 +128,11 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           </defs>
           <circle cx="50" cy="50" r="44" fill="none" stroke="#1a1a1a" stroke-width="7"/>
           <circle cx="50" cy="50" r="44" fill="none"
-            stroke="${e&&o?"#8eff71":"#484847"}"
+            stroke="${e&&a?"#8eff71":"#484847"}"
             stroke-width="7"
             stroke-linecap="round"
-            stroke-dasharray="${p}"
-            filter="${e&&o?"url(#kglow)":""}"
+            stroke-dasharray="${h}"
+            filter="${e&&a?"url(#kglow)":""}"
             style="transition:stroke-dasharray .5s ease,stroke .3s ease;"
           />
         </svg>
@@ -140,9 +140,9 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           <div class="k-temp-label">${this.config.name||t?.attributes.friendly_name||"Thermostat"}</div>
           <div class="k-temp-current">${void 0!==i?i:"--"}<sup>°C</sup></div>
           <div style="margin-top:6px;">
-            ${e?L`<span class="k-chip on" style="font-size:.65em;">
-                  ${o?"⚡ En chauffe":"⏸ En attente"}
-                </span>`:L`<span class="k-chip" style="font-size:.65em;">Éteint</span>`}
+            ${e?U`<span class="k-chip on" style="font-size:.65em;">
+                  ${a?"⚡ En chauffe":"⏸ En attente"}
+                </span>`:U`<span class="k-chip" style="font-size:.65em;">Éteint</span>`}
           </div>
         </div>
       </div>
@@ -157,14 +157,14 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
 
       <div class="k-modes-wrap" style="padding-top:12px;">
         <div class="k-section-label">Mode</div>
-        ${d?"":L`
+        ${p?"":U`
           <div class="k-warn">⚠ Configurez mode_entity pour changer de mode.</div>
         `}
         <div class="k-modes">
-          ${Object.entries(dt).map(([t,i])=>{const s="Standby"===t?!e:e&&c===t,n=s?i.color:"";return L`
+          ${Object.entries(dt).map(([t,i])=>{const s=void 0!==d?t===d:"Standby"===t?!e:e&&c===t,n=s?i.color:"";return U`
               <button
                 class="k-mode-btn ${s?"active":""}"
-                ?disabled=${!d&&"Standby"!==t}
+                ?disabled=${!p&&"Standby"!==t}
                 @click=${()=>this._activateMode(t)}
                 style="${s?`color:${n};border-color:${n}40;background:${n}14;`:""}"
               >
@@ -174,11 +174,11 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
             `})}
         </div>
       </div>
-    `}_renderEnergy(){const t=this._ent("power_entity"),e=this._ent("elec_entity"),i="on"===this._ent("heating_entity")?.state,s=t?parseFloat(t.state):null,n=t?.attributes.unit_of_measurement??"W",a=e?.state??null,o=e?.attributes.unit_of_measurement??"";return L`
+    `}_renderEnergy(){const t=this._ent("power_entity"),e=this._ent("elec_entity"),i="on"===this._ent("heating_entity")?.state,s=t?parseFloat(t.state):null,n=t?.attributes.unit_of_measurement??"W",o=e?.state??null,a=e?.attributes.unit_of_measurement??"";return U`
       <div class="k-section">
         <div class="k-section-label" style="margin-bottom:12px;">Énergie</div>
 
-        ${null!==s?L`
+        ${null!==s?U`
           <div class="k-power-hero">
             <div class="k-power-bg">electric_bolt</div>
             <div class="k-power-lbl">Puissance moyenne</div>
@@ -196,17 +196,17 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           </span>
         </div>
 
-        ${null!==a?L`
+        ${null!==o?U`
           <div class="k-stat-row">
             <span class="k-stat-lbl">
               <span class="ms k-stat-icon">bolt</span>
               Consommation
             </span>
-            <span class="k-stat-val">${a}<span class="k-stat-unit">${o}</span></span>
+            <span class="k-stat-val">${o}<span class="k-stat-unit">${a}</span></span>
           </div>
         `:""}
 
-        ${t||e?"":L`
+        ${t||e?"":U`
           <div class="k-placeholder" style="padding:30px 0;">
             <span class="ms" style="font-size:2.5em;color:#484847;">insights</span>
             <span class="k-placeholder-title">Données énergie</span>
@@ -217,11 +217,11 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           </div>
         `}
       </div>
-    `}_renderSettings(){const t=this._cl,e=this._ent("child_lock_entity"),i="on"===e?.state,s=this._ent("upper_temp_entity"),n=this._ent("lower_temp_entity"),a=this._ent("boost_entity"),o=this._ent("holiday_entity"),r="on"===this._ent("fault_entity")?.state,l=s?`${parseFloat(s.state)}°C`:null!=t?.attributes.upper_temp?`${t.attributes.upper_temp}°C`:"—",c=n?`${parseFloat(n.state)}°C`:null!=t?.attributes.lower_temp?`${t.attributes.lower_temp}°C`:"—",d=a?`${parseInt(a.state,10)} min`:null,p=o?`${parseInt(o.state,10)} j`:null;return L`
+    `}_renderSettings(){const t=this._cl,e=this._ent("child_lock_entity"),i="childLock"in this._opt?this._opt.childLock:"on"===e?.state,s=this._ent("upper_temp_entity"),n=this._ent("lower_temp_entity"),o=this._ent("boost_entity"),a=this._ent("holiday_entity"),r="on"===this._ent("fault_entity")?.state,l="upper_temp_entity"in this._opt?this._opt.upper_temp_entity:s?parseFloat(s.state):null,c="lower_temp_entity"in this._opt?this._opt.lower_temp_entity:n?parseFloat(n.state):null,d="boost_entity"in this._opt?this._opt.boost_entity:o?parseInt(o.state,10):null,p="holiday_entity"in this._opt?this._opt.holiday_entity:a?parseInt(a.state,10):null,h=null!==l?`${l}°C`:null!=t?.attributes.upper_temp?`${t.attributes.upper_temp}°C`:"—",u=null!==c?`${c}°C`:null!=t?.attributes.lower_temp?`${t.attributes.lower_temp}°C`:"—";return U`
       <div class="k-section">
         <div class="k-section-label" style="margin-bottom:12px;">Paramètres avancés</div>
 
-        ${e?L`
+        ${e?U`
           <div class="k-setting">
             <div class="k-setting-info">
               <span class="k-setting-title">Verrou enfant</span>
@@ -241,13 +241,13 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
             <span class="k-setting-title">Limite haute</span>
             <span class="k-setting-sub">number.limite_haute_temperature</span>
           </div>
-          ${s?L`
+          ${s?U`
             <div class="k-num-ctrl">
               <button class="k-num-btn" @click=${()=>this._adjustNumber("upper_temp_entity",-.5)}>−</button>
-              <span class="k-num-val">${l}</span>
+              <span class="k-num-val">${h}</span>
               <button class="k-num-btn" @click=${()=>this._adjustNumber("upper_temp_entity",.5)}>+</button>
             </div>
-          `:L`<span class="k-stat-val" style="color:#adaaaa">${l}</span>`}
+          `:U`<span class="k-stat-val" style="color:#adaaaa">${h}</span>`}
         </div>
 
         <div class="k-setting">
@@ -255,13 +255,13 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
             <span class="k-setting-title">Limite basse</span>
             <span class="k-setting-sub">number.limite_basse_temperature</span>
           </div>
-          ${n?L`
+          ${n?U`
             <div class="k-num-ctrl">
               <button class="k-num-btn" @click=${()=>this._adjustNumber("lower_temp_entity",-.5)}>−</button>
-              <span class="k-num-val">${c}</span>
+              <span class="k-num-val">${u}</span>
               <button class="k-num-btn" @click=${()=>this._adjustNumber("lower_temp_entity",.5)}>+</button>
             </div>
-          `:L`<span class="k-stat-val" style="color:#adaaaa">${c}</span>`}
+          `:U`<span class="k-stat-val" style="color:#adaaaa">${u}</span>`}
         </div>
 
         <div class="k-setting">
@@ -269,13 +269,13 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
             <span class="k-setting-title">Durée boost</span>
             <span class="k-setting-sub">number.duree_boost</span>
           </div>
-          ${a?L`
+          ${o?U`
             <div class="k-num-ctrl">
               <button class="k-num-btn" @click=${()=>this._adjustNumber("boost_entity",-5)}>−</button>
-              <span class="k-num-val">${d}</span>
+              <span class="k-num-val">${null!==d?`${d} min`:null}</span>
               <button class="k-num-btn" @click=${()=>this._adjustNumber("boost_entity",5)}>+</button>
             </div>
-          `:L`<span style="color:#484847;font-size:0.78em;">Non configuré</span>`}
+          `:U`<span style="color:#484847;font-size:0.78em;">Non configuré</span>`}
         </div>
 
         <div class="k-setting">
@@ -283,13 +283,13 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
             <span class="k-setting-title">Mode vacances</span>
             <span class="k-setting-sub">number.duree_vacances</span>
           </div>
-          ${o?L`
+          ${a?U`
             <div class="k-num-ctrl">
               <button class="k-num-btn" @click=${()=>this._adjustNumber("holiday_entity",-1)}>−</button>
-              <span class="k-num-val">${p}</span>
+              <span class="k-num-val">${null!==p?`${p} j`:null}</span>
               <button class="k-num-btn" @click=${()=>this._adjustNumber("holiday_entity",1)}>+</button>
             </div>
-          `:L`<span style="color:#484847;font-size:0.78em;">Non configuré</span>`}
+          `:U`<span style="color:#484847;font-size:0.78em;">Non configuré</span>`}
         </div>
 
         <hr class="k-hr" style="margin:12px 0;">
@@ -303,25 +303,25 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           </div>
         </div>
       </div>
-    `}_renderSchedule(){const t=this._slots(),e=this._activeSlot(),i=this._currentModeKey();return L`
+    `}_renderSchedule(){const t=this._slots(),e=this._activeSlot(),i=this._currentModeKey();return U`
       <div class="k-section">
         <div class="k-section-label" style="margin-bottom:4px;">Programmation HA</div>
         <div style="font-size:.75em;color:#adaaaa;margin-bottom:14px;line-height:1.5;">
           Créneaux gérés par la carte. Cliquer sur un créneau applique sa consigne.
         </div>
 
-        ${"Programming"===i?"":L`
+        ${"Programming"===i?"":U`
           <div class="k-warn" style="margin-bottom:12px;">
             ⚠ Mode Prog. non actif — activez-le depuis l'onglet Climat.
           </div>
         `}
 
-        ${t.map(t=>{const i=t===e;return L`
+        ${t.map(t=>{const i=t===e;return U`
             <div class="k-slot ${i?"active":""}"
                  @click=${()=>this._applySlot(t)}>
               <div>
                 <div class="k-slot-name">
-                  ${i?L`<span class="ms" style="font-size:.9em;color:#8eff71;vertical-align:middle;margin-right:4px;">radio_button_checked</span>`:""}
+                  ${i?U`<span class="ms" style="font-size:.9em;color:#8eff71;vertical-align:middle;margin-right:4px;">radio_button_checked</span>`:""}
                   ${t.name}
                 </div>
                 <div class="k-slot-time">À partir de ${t.start}</div>
@@ -334,9 +334,9 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           Modifiez les créneaux dans les options de la carte (éditeur YAML).
         </div>
       </div>
-    `}_applySlot(t){this._call("climate","set_temperature",{temperature:t.temperature},this.config.entity)}_renderNav(){return L`
+    `}_applySlot(t){const e=this._cl?.attributes.temperature??20;this._optCall("temp",t.temperature,e,()=>this._call("climate","set_temperature",{temperature:t.temperature},this.config.entity),()=>this._cl?.attributes.temperature===t.temperature)}_renderNav(){return U`
       <nav class="k-nav">
-        ${[{key:"climate",icon:"thermostat",label:"Climat"},{key:"schedule",icon:"calendar_today",label:"Prog."},{key:"energy",icon:"insights",label:"Énergie"},{key:"settings",icon:"settings",label:"Réglages"}].map(t=>L`
+        ${[{key:"climate",icon:"thermostat",label:"Climat"},{key:"schedule",icon:"calendar_today",label:"Prog."},{key:"energy",icon:"insights",label:"Énergie"},{key:"settings",icon:"settings",label:"Réglages"}].map(t=>U`
           <button class="k-nav-btn ${this._tab===t.key?"active":""}"
             @click=${()=>{this._tab=t.key}}>
             <span class="k-nav-icon">${t.icon}</span>
@@ -344,28 +344,29 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
           </button>
         `)}
       </nav>
-    `}render(){if(!this.hass||!this.config||!this._cl)return L`<ha-card>
+    `}render(){if(!this.hass||!this.config||!this._cl)return U`<ha-card>
         <div style="padding:1.2em;color:var(--error-color,#e53935);">
           ⚠ Configuration manquante — vérifiez l'entity.
         </div>
-      </ha-card>`;const t=this._cl,e="off"!==t.state,i="on"===this._ent("heating_entity")?.state,s="on"===this._ent("window_entity")?.state,n="on"===this._ent("fault_entity")?.state,a=this.config.name||t.attributes.friendly_name||"Thermostat";let o;switch(this._tab){case"climate":o=this._renderClimate();break;case"energy":o=this._renderEnergy();break;case"settings":o=this._renderSettings();break;case"schedule":o=this._renderSchedule()}return L`
+      </ha-card>`;const t=this._cl,e="off"!==t.state,i="on"===this._ent("heating_entity")?.state,s="on"===this._ent("window_entity")?.state,n="on"===this._ent("fault_entity")?.state,o=this.config.name||t.attributes.friendly_name||"Thermostat";let a;switch(this._tab){case"climate":a=this._renderClimate();break;case"energy":a=this._renderEnergy();break;case"settings":a=this._renderSettings();break;case"schedule":a=this._renderSchedule()}return U`
       <ha-card>
         <div class="k">
           <header class="k-header">
-            <span class="k-logo">⚡ ${a}</span>
+            <span class="k-logo">⚡ ${o}</span>
             <div class="k-chips">
-              ${e?L`<span class="k-chip on">${i?"Chauffe":"Actif"}</span>`:L`<span class="k-chip">Éteint</span>`}
-              ${s?L`<span class="k-chip err">🪟</span>`:""}
-              ${n?L`<span class="k-chip err">⚠</span>`:""}
+              ${e?U`<span class="k-chip on">${i?"Chauffe":"Actif"}</span>`:U`<span class="k-chip">Éteint</span>`}
+              ${s?U`<span class="k-chip err">🪟</span>`:""}
+              ${n?U`<span class="k-chip err">⚠</span>`:""}
             </div>
           </header>
 
-          <div class="k-content">${o}</div>
+          <div class="k-content">${a}</div>
 
+          ${this._toast?U`<div class="k-toast">${this._toast}</div>`:""}
           ${this._renderNav()}
         </div>
       </ha-card>
-    `}};ft.styles=o`
+    `}};ft.styles=a`
     :host { display: block; }
 
     ha-card {
@@ -382,6 +383,7 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
       min-height: 520px;
       font-family: 'Inter', var(--primary-font-family, sans-serif);
       color: #ffffff;
+      position: relative;
     }
 
     /* ── Material Symbols ── */
@@ -781,5 +783,30 @@ console.warn("The main 'lit-element' module entrypoint is deprecated. Please upd
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
     .k-nav-label { font-size: 0.58em; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-  `,t([lt({type:Object})],ft.prototype,"hass",void 0),t([lt({type:Object})],ft.prototype,"config",void 0),t([lt({type:String,attribute:!1})],ft.prototype,"_tab",void 0),ft=t([ot("tuya-thermostat-card")],ft),window.customCards=window.customCards||[],window.customCards.push({type:"tuya-thermostat-card",name:"Tuya Thermostat Card (Kinetic)",preview:!0,description:"Carte Lovelace style Kinetic pour le thermostat Tuya"});export{ft as TuyaThermostatCard,mt as TuyaThermostatCardEditor};
+
+    /* ── Toast ── */
+    .k-toast {
+      position: absolute;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,87,34,.95);
+      color: #fff;
+      font-size: 0.78em;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      white-space: nowrap;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+      z-index: 10;
+      animation: k-toast-in .2s ease;
+      pointer-events: none;
+    }
+    @keyframes k-toast-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+  `,t([lt({type:Object})],ft.prototype,"hass",void 0),t([lt({type:Object})],ft.prototype,"config",void 0),t([lt({type:String,attribute:!1})],ft.prototype,"_tab",void 0),t([lt({attribute:!1})],ft.prototype,"_opt",void 0),t([lt({attribute:!1})],ft.prototype,"_toast",void 0),ft=t([at("tuya-thermostat-card")],ft),window.customCards=window.customCards||[],window.customCards.push({type:"tuya-thermostat-card",name:"Tuya Thermostat Card (Kinetic)",preview:!0,description:"Carte Lovelace style Kinetic pour le thermostat Tuya"});export{ft as TuyaThermostatCard,mt as TuyaThermostatCardEditor};
 //# sourceMappingURL=tuya-pilot-thermostat-card.js.map

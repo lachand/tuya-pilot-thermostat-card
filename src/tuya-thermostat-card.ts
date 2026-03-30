@@ -215,6 +215,9 @@ export class TuyaThermostatCard extends LitElement {
   @property({ type: Object }) hass: any;
   @property({ type: Object }) config: any;
   @property({ type: String, attribute: false }) private _tab: Tab = 'climate';
+  @property({ attribute: false }) private _opt: Record<string, any> = {};
+  @property({ attribute: false }) private _toast: string = '';
+  private _timers: Record<string, ReturnType<typeof setTimeout>> = {};
 
   static styles = css`
     :host { display: block; }
@@ -233,6 +236,7 @@ export class TuyaThermostatCard extends LitElement {
       min-height: 520px;
       font-family: 'Inter', var(--primary-font-family, sans-serif);
       color: #ffffff;
+      position: relative;
     }
 
     /* ── Material Symbols ── */
@@ -632,6 +636,31 @@ export class TuyaThermostatCard extends LitElement {
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
     .k-nav-label { font-size: 0.58em; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* ── Toast ── */
+    .k-toast {
+      position: absolute;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,87,34,.95);
+      color: #fff;
+      font-size: 0.78em;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      white-space: nowrap;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+      z-index: 10;
+      animation: k-toast-in .2s ease;
+      pointer-events: none;
+    }
+    @keyframes k-toast-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
   `;
 
   setConfig(config: any) {
@@ -658,6 +687,40 @@ export class TuyaThermostatCard extends LitElement {
     this.hass.callService(domain, svc, data, { entity_id: eid });
   }
 
+  private _optCall(
+    key: string,
+    newVal: any,
+    prevVal: any,
+    action: () => void,
+    confirmFn: () => boolean,
+    timeoutMs = 8000
+  ) {
+    this._opt = { ...this._opt, [key]: newVal };
+    if (this._timers[key]) clearTimeout(this._timers[key]);
+    action();
+    this._timers[key] = setTimeout(() => {
+      delete this._timers[key];
+      if (confirmFn()) {
+        const n = { ...this._opt };
+        delete n[key];
+        this._opt = n;
+      } else {
+        this._opt = { ...this._opt, [key]: prevVal };
+        this._showToast('Action non confirmée — état précédent restauré');
+        setTimeout(() => {
+          const n = { ...this._opt };
+          delete n[key];
+          this._opt = n;
+        }, 3000);
+      }
+    }, timeoutMs);
+  }
+
+  private _showToast(msg: string) {
+    this._toast = msg;
+    setTimeout(() => { this._toast = ''; }, 4000);
+  }
+
   private _gaugeArc(value: number, min: number, max: number) {
     const r = 44;
     const circ = 2 * Math.PI * r;
@@ -676,9 +739,14 @@ export class TuyaThermostatCard extends LitElement {
 
   // ── Actions ──────────────────────────────────────────────────────────────
   private _adjustTemp(delta: number) {
-    const cur = this._cl?.attributes.temperature ?? 20;
-    this._call('climate', 'set_temperature',
-      { temperature: Math.round((cur + delta) * 2) / 2 }, this.config.entity);
+    const haVal = this._cl?.attributes.temperature ?? 20;
+    const curOpt = ('temp' in this._opt) ? this._opt.temp : haVal;
+    const next = Math.round((curOpt + delta) * 2) / 2;
+    this._optCall(
+      'temp', next, haVal,
+      () => this._call('climate', 'set_temperature', { temperature: next }, this.config.entity),
+      () => this._cl?.attributes.temperature === next,
+    );
   }
 
   private _slots(): Slot[] {
@@ -703,43 +771,62 @@ export class TuyaThermostatCard extends LitElement {
   }
 
   private _activateMode(key: string) {
-    if (key === 'Standby') {
-      this._call('climate', 'set_hvac_mode', { hvac_mode: 'off' }, this.config.entity);
-      return;
-    }
-    if (this._cl?.state === 'off') {
-      this._call('climate', 'set_hvac_mode', { hvac_mode: 'heat' }, this.config.entity);
-    }
-    // Programmation : applique la température du créneau actif + bascule sur l'onglet
-    if (key === 'Programming') {
-      const slot = this._activeSlot();
-      this._call('climate', 'set_temperature', { temperature: slot.temperature }, this.config.entity);
-      this._tab = 'schedule';
-    }
-    if (!this._isValid(this.config.mode_entity)) return;
-    const ent = this._ent('mode_entity');
-    const opts: string[] = ent?.attributes.options ?? [];
-    const option = opts.includes(key) ? key : (MODES[key]?.fr ?? key);
-    this._call('select', 'select_option', { option }, this.config.mode_entity);
+    const prevKey = ('mode' in this._opt) ? this._opt.mode : this._currentModeKey();
+    this._optCall(
+      'mode', key, prevKey,
+      () => {
+        if (key === 'Standby') {
+          this._call('climate', 'set_hvac_mode', { hvac_mode: 'off' }, this.config.entity);
+          return;
+        }
+        if (this._cl?.state === 'off') {
+          this._call('climate', 'set_hvac_mode', { hvac_mode: 'heat' }, this.config.entity);
+        }
+        if (key === 'Programming') {
+          const slot = this._activeSlot();
+          this._call('climate', 'set_temperature', { temperature: slot.temperature }, this.config.entity);
+          this._tab = 'schedule';
+        }
+        if (!this._isValid(this.config.mode_entity)) return;
+        const ent = this._ent('mode_entity');
+        const opts: string[] = ent?.attributes.options ?? [];
+        const option = opts.includes(key) ? key : (MODES[key]?.fr ?? key);
+        this._call('select', 'select_option', { option }, this.config.mode_entity);
+      },
+      () => key === 'Standby'
+        ? this._cl?.state === 'off'
+        : this._currentModeKey() === key,
+    );
   }
 
   private _toggleChildLock() {
     const eid = this.config.child_lock_entity;
     if (!this._isValid(eid)) return;
-    const isOn = this._ent('child_lock_entity')?.state === 'on';
-    this._call('switch', isOn ? 'turn_off' : 'turn_on', {}, eid);
+    const haIsOn = this._ent('child_lock_entity')?.state === 'on';
+    const curIsOn = ('childLock' in this._opt) ? this._opt.childLock : haIsOn;
+    const next = !curIsOn;
+    this._optCall(
+      'childLock', next, haIsOn,
+      () => this._call('switch', next ? 'turn_on' : 'turn_off', {}, eid),
+      () => (this._ent('child_lock_entity')?.state === 'on') === next,
+    );
   }
 
   private _adjustNumber(entityKey: string, delta: number) {
     const eid = this.config[entityKey];
     if (!this._isValid(eid)) return;
-    const ent = this._ent(entityKey);
-    const cur  = parseFloat(ent?.state ?? '0');
+    const ent  = this._ent(entityKey);
     const step = parseFloat(ent?.attributes.step ?? '1');
     const min  = parseFloat(ent?.attributes.min ?? '0');
     const max  = parseFloat(ent?.attributes.max ?? '999');
-    const next = Math.max(min, Math.min(max, Math.round((cur + delta) / step) * step));
-    this._call('number', 'set_value', { value: next }, eid);
+    const haVal = parseFloat(ent?.state ?? '0');
+    const curOpt = (entityKey in this._opt) ? this._opt[entityKey] : haVal;
+    const next = Math.max(min, Math.min(max, Math.round((curOpt + delta) / step) * step));
+    this._optCall(
+      entityKey, next, haVal,
+      () => this._call('number', 'set_value', { value: next }, eid),
+      () => Math.abs(parseFloat(this._ent(entityKey)?.state ?? '0') - next) < 0.01,
+    );
   }
 
   // ── Tab : Climate ─────────────────────────────────────────────────────────
@@ -747,13 +834,14 @@ export class TuyaThermostatCard extends LitElement {
     const cl = this._cl;
     const isOn = cl?.state !== 'off';
     const cur: number  = cl?.attributes.current_temperature ?? 0;
-    const tgt: number  = cl?.attributes.temperature ?? 20;
+    const tgt: number  = ('temp' in this._opt ? this._opt.temp : cl?.attributes.temperature) ?? 20;
     const minT: number = cl?.attributes.min_temp ?? 5;
     const maxT: number = cl?.attributes.max_temp ?? 35;
     const heating    = this._ent('heating_entity')?.state === 'on';
     const windowOpen = this._ent('window_entity')?.state === 'on';
     const fault      = this._ent('fault_entity')?.state === 'on';
     const modeKey    = this._currentModeKey();
+    const optMode    = 'mode' in this._opt ? this._opt.mode : undefined;
     const hasModeEnt = this._isValid(this.config.mode_entity);
     const dashArray  = this._gaugeArc(cur, minT, maxT);
     const arcColor   = isOn && heating ? '#8eff71' : '#484847';
@@ -814,9 +902,9 @@ export class TuyaThermostatCard extends LitElement {
         ` : ''}
         <div class="k-modes">
           ${Object.entries(MODES).map(([key, info]) => {
-            const active = key === 'Standby'
-              ? !isOn
-              : (isOn && modeKey === key);
+            const active = optMode !== undefined
+              ? key === optMode
+              : (key === 'Standby' ? !isOn : (isOn && modeKey === key));
             const col = active ? info.color : '';
             return html`
               <button
@@ -895,17 +983,22 @@ export class TuyaThermostatCard extends LitElement {
   private _renderSettings() {
     const cl          = this._cl;
     const childLockEnt= this._ent('child_lock_entity');
-    const childLock   = childLockEnt?.state === 'on';
+    const childLock   = ('childLock' in this._opt) ? this._opt.childLock : (childLockEnt?.state === 'on');
     const upperEnt    = this._ent('upper_temp_entity');
     const lowerEnt    = this._ent('lower_temp_entity');
     const boostEnt    = this._ent('boost_entity');
     const holidayEnt  = this._ent('holiday_entity');
     const fault       = this._ent('fault_entity')?.state === 'on';
 
-    const upperVal  = upperEnt  ? `${parseFloat(upperEnt.state)}°C`   : (cl?.attributes.upper_temp  != null ? `${cl.attributes.upper_temp}°C`  : '—');
-    const lowerVal  = lowerEnt  ? `${parseFloat(lowerEnt.state)}°C`   : (cl?.attributes.lower_temp  != null ? `${cl.attributes.lower_temp}°C`  : '—');
-    const boostVal  = boostEnt  ? `${parseInt(boostEnt.state, 10)} min` : null;
-    const holidayVal= holidayEnt? `${parseInt(holidayEnt.state, 10)} j` : null;
+    const upperNum   = ('upper_temp_entity' in this._opt) ? this._opt['upper_temp_entity'] : (upperEnt ? parseFloat(upperEnt.state) : null);
+    const lowerNum   = ('lower_temp_entity' in this._opt) ? this._opt['lower_temp_entity'] : (lowerEnt ? parseFloat(lowerEnt.state) : null);
+    const boostNum   = ('boost_entity' in this._opt) ? this._opt['boost_entity'] : (boostEnt ? parseInt(boostEnt.state, 10) : null);
+    const holidayNum = ('holiday_entity' in this._opt) ? this._opt['holiday_entity'] : (holidayEnt ? parseInt(holidayEnt.state, 10) : null);
+
+    const upperVal  = upperNum  !== null ? `${upperNum}°C`    : (cl?.attributes.upper_temp  != null ? `${cl.attributes.upper_temp}°C`  : '—');
+    const lowerVal  = lowerNum  !== null ? `${lowerNum}°C`    : (cl?.attributes.lower_temp  != null ? `${cl.attributes.lower_temp}°C`  : '—');
+    const boostVal  = boostNum  !== null ? `${boostNum} min`  : null;
+    const holidayVal= holidayNum !== null ? `${holidayNum} j` : null;
 
     return html`
       <div class="k-section">
@@ -1041,7 +1134,12 @@ export class TuyaThermostatCard extends LitElement {
   }
 
   private _applySlot(slot: Slot) {
-    this._call('climate', 'set_temperature', { temperature: slot.temperature }, this.config.entity);
+    const haVal = this._cl?.attributes.temperature ?? 20;
+    this._optCall(
+      'temp', slot.temperature, haVal,
+      () => this._call('climate', 'set_temperature', { temperature: slot.temperature }, this.config.entity),
+      () => this._cl?.attributes.temperature === slot.temperature,
+    );
   }
 
   // ── Nav ───────────────────────────────────────────────────────────────────
@@ -1106,6 +1204,7 @@ export class TuyaThermostatCard extends LitElement {
 
           <div class="k-content">${content}</div>
 
+          ${this._toast ? html`<div class="k-toast">${this._toast}</div>` : ''}
           ${this._renderNav()}
         </div>
       </ha-card>
