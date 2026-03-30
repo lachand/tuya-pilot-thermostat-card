@@ -26,6 +26,15 @@ const FR_TO_KEY: Record<string, string> = Object.fromEntries(
   Object.entries(MODES).map(([k, v]) => [v.fr, k])
 );
 
+// ── Créneaux de programmation par défaut ───────────────────────────────────
+interface Slot { name: string; start: string; temperature: number }
+const DEFAULT_SLOTS: Slot[] = [
+  { name: 'Nuit',    start: '22:00', temperature: 17 },
+  { name: 'Matin',   start: '06:30', temperature: 20 },
+  { name: 'Journée', start: '09:00', temperature: 18 },
+  { name: 'Soir',    start: '17:30', temperature: 21 },
+];
+
 // ── Éditeur visuel ─────────────────────────────────────────────────────────
 const SUFFIX_MAP: Record<string, string> = {
   '_mode':        'mode_entity',
@@ -538,6 +547,36 @@ export class TuyaThermostatCard extends LitElement {
     .k-alarm-title { font-weight: 600; font-size: 0.88em; }
     .k-alarm-sub   { font-size: 0.68em; color: #adaaaa; text-transform: uppercase; letter-spacing: 0.04em; }
 
+    /* ── Schedule slots ── */
+    .k-slot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #131313;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all .2s;
+    }
+    .k-slot:hover { background: #1a1a1a; }
+    .k-slot.active {
+      background: rgba(142,255,113,.08);
+      border-color: rgba(142,255,113,.25);
+    }
+    .k-slot-name { font-size: .9em; font-weight: 600; }
+    .k-slot-time { font-size: .7em; color: #adaaaa; text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+    .k-slot-temp {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #adaaaa;
+    }
+    .k-slot.active .k-slot-temp { color: #8eff71; }
+
+    .k-warn { font-size: .75em; color: #f4b400; }
+
     /* ── Schedule placeholder ── */
     .k-placeholder {
       flex: 1;
@@ -642,6 +681,27 @@ export class TuyaThermostatCard extends LitElement {
       { temperature: Math.round((cur + delta) * 2) / 2 }, this.config.entity);
   }
 
+  private _slots(): Slot[] {
+    return this.config.slots ?? DEFAULT_SLOTS;
+  }
+
+  private _activeSlot(): Slot {
+    const slots = this._slots();
+    const now = new Date();
+    const cur = now.getHours() * 60 + now.getMinutes();
+    const sorted = [...slots].sort((a, b) => this._toMins(a.start) - this._toMins(b.start));
+    let active = sorted[sorted.length - 1];
+    for (const s of sorted) {
+      if (this._toMins(s.start) <= cur) active = s;
+    }
+    return active;
+  }
+
+  private _toMins(hhmm: string): number {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  }
+
   private _activateMode(key: string) {
     if (key === 'Standby') {
       this._call('climate', 'set_hvac_mode', { hvac_mode: 'off' }, this.config.entity);
@@ -650,10 +710,15 @@ export class TuyaThermostatCard extends LitElement {
     if (this._cl?.state === 'off') {
       this._call('climate', 'set_hvac_mode', { hvac_mode: 'heat' }, this.config.entity);
     }
+    // Programmation : applique la température du créneau actif + bascule sur l'onglet
+    if (key === 'Programming') {
+      const slot = this._activeSlot();
+      this._call('climate', 'set_temperature', { temperature: slot.temperature }, this.config.entity);
+      this._tab = 'schedule';
+    }
     if (!this._isValid(this.config.mode_entity)) return;
     const ent = this._ent('mode_entity');
     const opts: string[] = ent?.attributes.options ?? [];
-    // Détermine si les options sont des labels FR ou des clés Tuya
     const option = opts.includes(key) ? key : (MODES[key]?.fr ?? key);
     this._call('select', 'select_option', { option }, this.config.mode_entity);
   }
@@ -933,17 +998,50 @@ export class TuyaThermostatCard extends LitElement {
 
   // ── Tab : Schedule ────────────────────────────────────────────────────────
   private _renderSchedule() {
+    const slots    = this._slots();
+    const active   = this._activeSlot();
+    const modeKey  = this._currentModeKey();
+    const isActive = modeKey === 'Programming';
+
     return html`
-      <div class="k-placeholder">
-        <span class="ms" style="font-size:3em;color:#484847;">calendar_today</span>
-        <span class="k-placeholder-title">Programmation</span>
-        <span class="k-placeholder-sub">
-          Les créneaux horaires (Matin / Jour / Soir / Nuit) nécessitent
-          des entités dédiées dans l'intégration, actuellement en développement.<br><br>
-          En attendant, activez le mode <strong>Prog.</strong> depuis l'onglet Climat.
-        </span>
+      <div class="k-section">
+        <div class="k-section-label" style="margin-bottom:4px;">Programmation HA</div>
+        <div style="font-size:.75em;color:#adaaaa;margin-bottom:14px;line-height:1.5;">
+          Créneaux gérés par la carte. Cliquer sur un créneau applique sa consigne.
+        </div>
+
+        ${!isActive ? html`
+          <div class="k-warn" style="margin-bottom:12px;">
+            ⚠ Mode Prog. non actif — activez-le depuis l'onglet Climat.
+          </div>
+        ` : ''}
+
+        ${slots.map((s: Slot) => {
+          const isCurrent = s === active;
+          return html`
+            <div class="k-slot ${isCurrent ? 'active' : ''}"
+                 @click=${() => this._applySlot(s)}>
+              <div>
+                <div class="k-slot-name">
+                  ${isCurrent ? html`<span class="ms" style="font-size:.9em;color:#8eff71;vertical-align:middle;margin-right:4px;">radio_button_checked</span>` : ''}
+                  ${s.name}
+                </div>
+                <div class="k-slot-time">À partir de ${s.start}</div>
+              </div>
+              <div class="k-slot-temp">${s.temperature}°C</div>
+            </div>
+          `;
+        })}
+
+        <div style="font-size:.7em;color:#484847;margin-top:12px;line-height:1.4;">
+          Modifiez les créneaux dans les options de la carte (éditeur YAML).
+        </div>
       </div>
     `;
+  }
+
+  private _applySlot(slot: Slot) {
+    this._call('climate', 'set_temperature', { temperature: slot.temperature }, this.config.entity);
   }
 
   // ── Nav ───────────────────────────────────────────────────────────────────
