@@ -115,7 +115,9 @@ export class TuyaThermostatCardEditor extends LitElement {
         if (uid.endsWith(sfx) && !det[key]) { det[key] = eid; break; }
       }
       if (dom === 'select' && !det.mode_entity) {
-        det.mode_entity = eid;
+        // Exclure le sélecteur d'unité (c/f) : le mode a forcément plus de 2 options
+        const opts = this.hass?.states[eid]?.attributes?.options;
+        if (!opts || opts.length > 2) det.mode_entity = eid;
       } else if (dom === 'binary_sensor') {
         if (!det.heating_entity  && /heat|chauffe|running/.test(nm)) det.heating_entity = eid;
         else if (!det.window_entity  && /window|fen|vitre/.test(nm))  det.window_entity = eid;
