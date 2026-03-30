@@ -11,16 +11,17 @@ import { LitElement, html, css, property, customElement } from 'lit-element';
 })();
 
 // ── Modes Tuya ─────────────────────────────────────────────────────────────
-interface ModeInfo { fr: string; icon: string; color: string }
+interface ModeInfo { fr: string; label: string; icon: string; color: string }
 const MODES: Record<string, ModeInfo> = {
-  Standby:     { fr: 'Éteint',    icon: 'power_settings_new',  color: '#adaaaa' },
-  Comfort:     { fr: 'Confort',   icon: 'local_fire_department',color: '#8eff71' },
-  ECO:         { fr: 'Éco',       icon: 'eco',                  color: '#6bfe9c' },
-  Anti_forst:  { fr: 'Hors-gel',  icon: 'ac_unit',              color: '#69daff' },
-  Thermostat:  { fr: 'Temp.',     icon: 'device_thermostat',    color: '#8eff71' },
-  Programming: { fr: 'Prog.',     icon: 'schedule',             color: '#69daff' },
+  Standby:     { fr: 'Éteint',        label: 'Éteint',   icon: 'power_settings_new',   color: '#adaaaa' },
+  Comfort:     { fr: 'Confort',       label: 'Confort',  icon: 'local_fire_department', color: '#8eff71' },
+  ECO:         { fr: 'Éco',           label: 'Éco',      icon: 'eco',                   color: '#6bfe9c' },
+  Anti_forst:  { fr: 'Hors-gel',      label: 'Hors-gel', icon: 'ac_unit',               color: '#69daff' },
+  Thermostat:  { fr: 'Températures',  label: 'Temp.',    icon: 'device_thermostat',     color: '#8eff71' },
+  Programming: { fr: 'Programmation', label: 'Prog.',    icon: 'schedule',              color: '#69daff' },
 };
 
+// fr (valeur exacte de l'option select) → clé Tuya
 const FR_TO_KEY: Record<string, string> = Object.fromEntries(
   Object.entries(MODES).map(([k, v]) => [v.fr, k])
 );
@@ -760,7 +761,7 @@ export class TuyaThermostatCard extends LitElement {
                 style="${active ? `color:${col};border-color:${col}40;background:${col}14;` : ''}"
               >
                 <span class="ms" style="${active ? `color:${col};font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;` : ''}">${info.icon}</span>
-                <span class="k-mode-label">${info.fr}</span>
+                <span class="k-mode-label">${info.label}</span>
               </button>
             `;
           })}
