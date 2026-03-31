@@ -42,6 +42,7 @@ const SUFFIX_MAP: Record<string, string> = {
   '_window':      'window_entity',
   '_fault':       'fault_entity',
   '_power':       'power_entity',
+  '_energy':      'elec_entity',
   '_child_lock':  'child_lock_entity',
   '_upper_temp':  'upper_temp_entity',
   '_lower_temp':  'lower_temp_entity',
@@ -134,7 +135,7 @@ export class TuyaThermostatCardEditor extends LitElement {
         else if (!det.fault_entity   && /fault|alarm|d.faut/.test(nm)) det.fault_entity = eid;
       } else if (dom === 'sensor') {
         if (!det.power_entity && /power|puissance/.test(nm)) det.power_entity = eid;
-        else if (!det.elec_entity && /elec|conso|statistic/.test(nm)) det.elec_entity = eid;
+        else if (!det.elec_entity && /elec|conso|statistic|energy|energie/.test(nm)) det.elec_entity = eid;
       } else if (dom === 'switch' && !det.child_lock_entity && /child|lock|verrou/.test(nm)) {
         det.child_lock_entity = eid;
       } else if (dom === 'number') {
